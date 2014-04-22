@@ -49,6 +49,13 @@ Y.mix(YUI.Env[Y.version].modules, {
             "aui-component"
         ]
     },
+    "aui-affix": {
+        "requires": [
+            "base",
+            "node-screen",
+            "aui-node"
+        ]
+    },
     "aui-aria": {
         "requires": [
             "plugin",
@@ -1133,4 +1140,4 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = '1c2589771a90d2d5f576469880a685d9';
+YUI.Env[Y.version].md5 = '475cf55a00f25fa47dd914528be9b67b';
