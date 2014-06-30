@@ -9,4 +9,4 @@ install:
     - "gulp build"
 script:
     - "gulp lint"
-    - "gulp tests"
+    - "gulp test"
