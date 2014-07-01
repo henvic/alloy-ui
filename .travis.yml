@@ -14,5 +14,26 @@ install:
 script:
     - "gulp lint"
     - "gulp test"
+after_script:
+    - "gulp ci-docs"
+env:
+    - TEST_SUITE=units
+    - TEST_SUITE=integration
+addons:
+    sauce_connect:
+        username: "foo"
+        access_key: "bar"
+matrix:
+    - allow_failures:
+        - env: TEST_SUITE=integration
+    - exclude:
+        - os: osx
+          env: TEST_SUITE=integration
+        - env:
+          - TEST_SUITE=integration
+          - TRAVIS_PULL_REQUEST
+    fast_finish: true
 notifications:
     irc: "chat.freenode.net#henvic"
+    email: false
+    slack: '<account>:<token>#alloyui'
