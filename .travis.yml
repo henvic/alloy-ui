@@ -16,13 +16,14 @@ script:
     - "gulp test"
 after_script:
     - "gulp ci-docs"
+    - "cat lcov.info | codeclimate"
 env:
     - TEST_SUITE=units
     - TEST_SUITE=integration
 addons:
-    sauce_connect:
-        username: "foo"
-        access_key: "bar"
+    code_climate:
+        repo_token:
+            secure: "diTOa3nv31vkodOtFw7/1BpQIOzYBv9zKPuPa7sOXCp0YHWurZziyWnrwuTgvypwR9ugwMMaDSoEN8+7TtEQU7xVugZi0UN4JJ21bFrryz8Zes29Ktuh1SvKc+g/1b0hJpqQeVakXMrNVvyURDMAmw9C4qTZacQsOTW77wpttxo="
 matrix:
     - allow_failures:
         - env: TEST_SUITE=integration
@@ -36,4 +37,5 @@ matrix:
 notifications:
     irc: "chat.freenode.net#henvic"
     email: false
-    slack: '<account>:<token>#alloyui'
+    slack:
+        secure: "BCmPmv4v32HZCeRys31lAbmpXpylcNrWmScyNGcP7O4FQbVQimhsxnQU6SZIlwSD/HP0Bfc5wIgLteQjMJxYfEk1mnm4gDI2SRSeLE/18TSRGgNMPXgYh6t3uRKHTu8Z8jNs6zPhjW9Yi5TsGs3ebFY+7u32Ke8odAwcpz89EFk="
