@@ -6,12 +6,13 @@ node_js:
     - "0.10"
     - "0.11"
 install:
+    - "npm install -g codeclimate-test-reporter"
     - "npm install"
     - "gulp init"
     - "gulp build"
 script:
     - "gulp lint"
-    - "gulp coverage"
+    - "gulp test"
 after_script:
     - "codeclimate < coverage/lcov.info"
 addons:
