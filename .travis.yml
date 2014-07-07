@@ -13,10 +13,9 @@ install:
     - "gulp build"
 script:
     - "gulp lint"
-    - "gulp test"
+    - "gulp coverage"
 after_script:
-    - "istanbul instrument src -x "[ **/node_modules/**, **/test/**, **/tests/**, **/meta/** ]" -o coverage"
-    - "cat lcov.info | codeclimate"
+    - "codeclimate < coverage/lcov.info"
 env:
     - TEST_SUITE=units
     - TEST_SUITE=integration

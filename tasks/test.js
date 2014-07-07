@@ -15,6 +15,16 @@ gulp.task('test', function(callback) {
         });
 });
 
+gulp.task('coverage', function(callback) {
+    var args = ['test', '--coverage', '--coverdir', ROOT + '/coverage'];
+    var cmd = 'yogi';
+
+    spawn(cmd, args, CWD)
+        .on('exit', function() {
+            callback();
+        });
+});
+
 gulp.task('test-browser', function(callback) {
     var args = [];
     var cmd = 'yeti';
