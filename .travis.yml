@@ -5,8 +5,6 @@ os:
 node_js:
     - "0.10"
     - "0.11"
-before_install:
-    - "npm install -g gulp"
 install:
     - "npm install"
     - "gulp init"
@@ -16,23 +14,10 @@ script:
     - "gulp coverage"
 after_script:
     - "codeclimate < coverage/lcov.info"
-env:
-    - TEST_SUITE=units
-    - TEST_SUITE=integration
 addons:
     code_climate:
         repo_token:
             secure: "diTOa3nv31vkodOtFw7/1BpQIOzYBv9zKPuPa7sOXCp0YHWurZziyWnrwuTgvypwR9ugwMMaDSoEN8+7TtEQU7xVugZi0UN4JJ21bFrryz8Zes29Ktuh1SvKc+g/1b0hJpqQeVakXMrNVvyURDMAmw9C4qTZacQsOTW77wpttxo="
-matrix:
-    - allow_failures:
-        - env: TEST_SUITE=integration
-    - exclude:
-        - os: osx
-          env: TEST_SUITE=integration
-        - env:
-          - TEST_SUITE=integration
-          - TRAVIS_PULL_REQUEST
-    fast_finish: true
 notifications:
     irc: "chat.freenode.net#henvic"
     email: false
