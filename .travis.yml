@@ -7,6 +7,7 @@ node_js:
     - "0.11"
 install:
     - "npm install -g codeclimate-test-reporter"
+    - "npm install -g istanbul"
     - "npm install"
     - "gulp init"
     - "gulp build"
@@ -15,7 +16,7 @@ script:
     - "gulp coverage"
 after_script:
     - "istanbul report --root coverage text"
-    - "codeclimate < coverage/lcov.info"
+    - '[ "${TRAVIS_NODE_VERSION}" = "0.10" ] && codeclimate < coverage/lcov.info'
 addons:
     code_climate:
         repo_token:
