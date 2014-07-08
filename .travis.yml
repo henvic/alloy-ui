@@ -12,7 +12,7 @@ install:
     - "gulp build"
 script:
     - "gulp lint"
-    - "gulp test"
+    - "gulp coverage"
 after_script:
     - "codeclimate < coverage/lcov.info"
 addons:
