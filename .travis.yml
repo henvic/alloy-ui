@@ -14,6 +14,7 @@ script:
     - "gulp lint"
     - "gulp coverage"
 after_script:
+    - "istanbul report --root coverage text"
     - "codeclimate < coverage/lcov.info"
 addons:
     code_climate:
