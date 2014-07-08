@@ -1,12 +1,9 @@
 language: node_js
-os:
-    - linux
-    - osx
 node_js:
     - "0.10"
     - "0.11"
 install:
-    - '[ "${TRAVIS_NODE_VERSION}" = "0.10" ] && [ "${TRAVIS_OS_NAME}" = "linux" ] && npm install -g codeclimate-test-reporter'
+    - "npm install -g codeclimate-test-reporter"
     - "npm install -g istanbul"
     - "npm install"
     - "gulp init"
@@ -16,7 +13,7 @@ script:
     - "gulp coverage"
     - "istanbul report --root coverage text"
 after_script:
-    - '[ "${TRAVIS_NODE_VERSION}" = "0.10" ] && [ "${TRAVIS_OS_NAME}" = "linux" ] && codeclimate < coverage/lcov.info'
+    - "codeclimate < coverage/lcov.info"
 addons:
     code_climate:
         repo_token:
@@ -26,7 +23,3 @@ notifications:
     email: false
     slack:
         secure: "BCmPmv4v32HZCeRys31lAbmpXpylcNrWmScyNGcP7O4FQbVQimhsxnQU6SZIlwSD/HP0Bfc5wIgLteQjMJxYfEk1mnm4gDI2SRSeLE/18TSRGgNMPXgYh6t3uRKHTu8Z8jNs6zPhjW9Yi5TsGs3ebFY+7u32Ke8odAwcpz89EFk="
-matrix:
-    exclude:
-    - os: osx
-      node_js: "0.11"
