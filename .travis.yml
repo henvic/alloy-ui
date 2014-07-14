@@ -8,4 +8,4 @@ install:
     - "gulp build"
 script:
     - "gulp lint"
-    - "yeti --hub http://yeti-2.liferay.com"
+    - "yeti --hub http://yeti-1.liferay.com"
