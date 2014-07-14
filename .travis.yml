@@ -1,0 +1,10 @@
+language: node_js
+node_js:
+    - "0.10"
+install:
+    - "npm install"
+    - "gulp init"
+    - "gulp build"
+script:
+    - "gulp lint"
+    - "yeti --hub http://yeti-2.liferay.com"
