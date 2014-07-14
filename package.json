@@ -43,6 +43,7 @@
     "shifter": "~0.5.0",
     "spawn-local-bin": "~0.1.4",
     "yogi": "~0.1.12",
+    "yeti": "~0.2.29",
     "yuidocjs": "~0.3.50"
   },
   "engines": {
