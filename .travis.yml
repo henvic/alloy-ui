@@ -10,6 +10,9 @@ script:
 - gulp ci-browsers
 addons:
   sauce_connect:
-    username: "henvic"
+    username: henvic
     access_key:
-      secure: "HS6jfi2t1c5+5jnZ+RWbATY8S0Ze8/2CqxiVExlRdjtZZRz4AB3eVNUaspX4krmNKr+R0xRI5eYsE82eqtmg/76MyNVAwhLNfJzin1yVUrzBXyhCDIUYv1ert9Xsno6YyCnIiWxFGAlLOezPvWh8OUN52sx5UI+hbBBHRmC4eik="
+      secure: HS6jfi2t1c5+5jnZ+RWbATY8S0Ze8/2CqxiVExlRdjtZZRz4AB3eVNUaspX4krmNKr+R0xRI5eYsE82eqtmg/76MyNVAwhLNfJzin1yVUrzBXyhCDIUYv1ert9Xsno6YyCnIiWxFGAlLOezPvWh8OUN52sx5UI+hbBBHRmC4eik=
+env:
+  global:
+    secure: VfFT1hgauOtRUWvV5icrPnCnKpAROdn5rvKaXUVmSS4mi8fHP39AxvKEy2M0ANM6+irNuGUYeEpqXIoyEUFpBxVbnFYwVapbnYCqlGTZLewvC8d64u6VFt7ofG9f0JGuHlryAnwC9G2+3OrO9pEe30+/K5f1P9rae9YpK+1gMw8=
