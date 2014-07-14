@@ -9,9 +9,7 @@ script:
 - gulp lint
 - gulp ci-browsers
 addons:
-  sauce_connect: true
-env:
-  global:
-  - secure: jcc3RMUvV9CKWZO8VbHFzFFYuqEu+ekwy49cBibTdyaw/wz8AGoukhwAal2JuTqZbSms7QlOe9zER/vKrdXJ/QiulZAZteo9v1UT8u/a2qIrvZny7uV0YKcFYpKvEyiZJfUVyZb7HoIdAC+81p6FniLZ6+pF1K/1RNH3alsv3S8=
-  - secure: s1Fsr9QogN8eNhCClLHaPW6xO3itVf6MeAY0mEkQpLMvTFzoa5apW/4nb7yUiPbX92d5UPQ9oalJ8SAWPplOMvk1dk/Uj2sWe0aXSaqVPYZwlE3K0mOgfVAEQjJDbwTJ7NUsMfs0Ad/5uvTxigosjR6trQa7UHHcSfsxBze/cIY=
-  - secure: DDi4p1QHP8eJ8c4SR7xsepMN9kqP7uAmoU+n/5wmpxegOr9vy0mHuxMQvnwjE57CbirTMbn2UsO4glQfPL3ae7BR90YBgxOYu687w394s9a5tO0LGYbG5wYagzeH4oPCuTRj+Ai3gagr+5bRlbdo/ysRSRnAkmn/YHTlnvY8owo=
+  sauce_connect:
+    username: "henvic"
+    access_key:
+      secure: "HS6jfi2t1c5+5jnZ+RWbATY8S0Ze8/2CqxiVExlRdjtZZRz4AB3eVNUaspX4krmNKr+R0xRI5eYsE82eqtmg/76MyNVAwhLNfJzin1yVUrzBXyhCDIUYv1ert9Xsno6YyCnIiWxFGAlLOezPvWh8OUN52sx5UI+hbBBHRmC4eik="
