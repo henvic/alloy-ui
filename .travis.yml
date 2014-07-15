@@ -6,7 +6,6 @@ install:
 - gulp init
 - gulp build
 script:
-- gulp lint
 - gulp ci-browsers
 addons:
   sauce_connect:
