@@ -29,6 +29,8 @@ gulp.task('ci-browsers', function (callback) {
             caps = getCapabilities(capabilities),
             args = ['--wd-url', process.env.SELENIUM_HOST, '--caps', caps];
 
+        console.log('Printing selenium host: ' + process.env.SELENIUM_HOST);
+
         spawn(cmd, args, CWD)
             .on('exit', function(code) {
                 if (code !== 0) {
