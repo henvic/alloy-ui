@@ -1,21 +1,7 @@
 [
     {
-        "browserName": "internet explorer",
-        "version": "8",
-        "platform": "Windows XP"
-    },
-    {
-        "browserName": "internet explorer",
-        "version": "9",
-        "screen-resolution": "800x600"
-    },
-    {
-        "browserName": "internet explorer",
-        "version": "10",
-        "screen-resolution": "1920x1200"
-    },
-    {
-        "browserName": "internet explorer",
-        "version": "11"
+        "browserName": "chrome",
+        "version": "35",
+        "platform": "Linux"
     }
 ]
