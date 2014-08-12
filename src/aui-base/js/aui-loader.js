@@ -492,20 +492,20 @@ Y.mix(YUI.Env[Y.version].modules, {
         "condition": {
             "name": "aui-event-input",
             "test": function(A) {
-                var supportsDOMEvent = A.supportsDOMEvent,
-                    testFeature = A.Features.test,
-                    addFeature = A.Features.add;
+    var supportsDOMEvent = A.supportsDOMEvent,
+        testFeature = A.Features.test,
+        addFeature = A.Features.add;
 
-                if (testFeature('event', 'input') === undefined) {
-                    addFeature('event', 'input', {
-                        test: function() {
-                            return supportsDOMEvent(document.createElement('textarea'), 'input');
-                        }
-                    });
-                }
+    if (testFeature('event', 'input') === undefined) {
+        addFeature('event', 'input', {
+            test: function() {
+                return supportsDOMEvent(document.createElement('textarea'), 'input');
+            }
+        });
+    }
 
-                return !testFeature('event', 'input');
-            },
+    return !testFeature('event', 'input');
+},
             "trigger": "aui-event"
         },
         "requires": [
@@ -954,6 +954,13 @@ Y.mix(YUI.Env[Y.version].modules, {
             "aui-aria"
         ]
     },
+    "aui-promise": {
+        "requires": [
+            "array-invoke",
+            "promise",
+            "oop"
+        ]
+    },
     "aui-rating": {
         "use": [
             "aui-rating-base",
@@ -1143,6 +1150,49 @@ Y.mix(YUI.Env[Y.version].modules, {
         "requires": [
             "aui-base-deprecated",
             "plugin"
+        ]
+    },
+    "aui-surface": {
+        "use": [
+            "aui-surface-app",
+            "aui-surface-screen"
+        ]
+    },
+    "aui-surface-app": {
+        "requires": [
+            "event-delegate",
+            "node-event-html5",
+            "aui-surface-base",
+            "aui-surface-screen",
+            "aui-surface-screen-route"
+        ]
+    },
+    "aui-surface-base": {
+        "requires": [
+            "base-build",
+            "node-style",
+            "timers",
+            "aui-debounce",
+            "aui-promise",
+            "aui-parse-content"
+        ]
+    },
+    "aui-surface-screen": {
+        "requires": [
+            "base-build"
+        ]
+    },
+    "aui-surface-screen-html": {
+        "requires": [
+            "io",
+            "aui-promise",
+            "aui-surface-screen",
+            "aui-url"
+        ]
+    },
+    "aui-surface-screen-route": {
+        "requires": [
+            "base-build"
         ]
     },
     "aui-swf-deprecated": {
@@ -1416,4 +1466,4 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = 'b686029fbc7b1029267a057f36ea552f';
+YUI.Env[Y.version].md5 = '74c3c783145607c0a9e8b9fd9d6d6c01';
