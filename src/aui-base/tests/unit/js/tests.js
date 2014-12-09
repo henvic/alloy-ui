@@ -562,6 +562,23 @@ YUI.add('aui-base-tests', function(Y) {
             for (var i = 0; i < caseStringsUpper.length; i++) {
                 Assert.areEqual(Y.Lang.String.toLowerCase(caseStringsUpper[i]), caseStringsLower[i]);
             }
+        },
+
+        'should check if a number is an integer': function() {
+            var isInteger = Y.Lang.isInteger;
+
+            Assert.isTrue(isInteger(42));
+            Assert.isTrue(isInteger(999));
+            Assert.isTrue(isInteger(123456));
+            Assert.isTrue(isInteger(9007199254740991));
+            Assert.isTrue(isInteger(-9007199254740991));
+
+            Assert.isFalse(isInteger(9007199254740992));
+            Assert.isFalse(isInteger(-9007199254740992));
+            Assert.isFalse(isInteger(Number.MAX_VALUE));
+            Assert.isFalse(isInteger(Number.MIN_VALUE));
+            Assert.isFalse(isInteger(4.2));
+            Assert.isFalse(isInteger('42'));
         }
     }));
 
