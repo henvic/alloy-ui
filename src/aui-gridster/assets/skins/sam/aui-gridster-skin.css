@@ -1,0 +1,46 @@
+.gridster {
+    position: relative;
+}
+
+.gridster-cell {
+    position: absolute;
+    font-size: 400%;
+    width: 25%;
+    height: 25%;
+}
+
+.gridster-top-1 {
+    top: 0;
+}
+
+.gridster-top-2 {
+    top: 25%;
+}
+
+.gridster-top-3 {
+    top: 50%;
+}
+
+.gridster-top-4 {
+    top: 75%;
+}
+
+.gridster-left-1 {
+    left: 0;
+}
+
+.gridster-left-2 {
+    left: 25%;
+}
+
+.gridster-left-3 {
+    left: 50%;
+}
+
+.gridster-left-4 {
+    left: 75%;
+}
+
+.gridster-cell-not-displayed {
+    display: none;
+}

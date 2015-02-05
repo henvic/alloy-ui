@@ -1,0 +1,191 @@
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Alloy 3 Gridster</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../../build/aui-css/css/bootstrap.css">
+    <script src="../../build/aui/aui.js"></script>
+    <style>
+    .gridster {
+        margin: 100px;
+        background: #aaa;
+        width: 600px;
+        height: 600px;
+    }
+
+    .gridster-cell {
+        opacity: 0.9;
+    }
+
+    .cell-0 {
+        background: #000000;
+    }
+
+    .cell-0::after {
+        content: '0';
+    }
+
+    .cell-1 {
+        background: #ffaabb;
+    }
+
+    .cell-1::after {
+        content: '1';
+    }
+
+    .cell-2 {
+        background: #ffcccc;
+    }
+
+    .cell-2::after {
+        content: '2';
+    }
+
+    .cell-3 {
+        background: #ddffaa;
+    }
+
+    .cell-3::after {
+        content: '3';
+    }
+
+    .cell-4 {
+        background: #44aaaa;
+    }
+
+    .cell-4::after {
+        content: '4';
+    }
+
+    .cell-5 {
+        background: #44aaff;
+    }
+
+    .cell-5::after {
+        content: '5';
+    }
+
+    .cell-6 {
+        background: #44bbff;
+    }
+
+    .cell-6::after {
+        content: '6';
+    }
+
+    .cell-7 {
+        background: #44ddff;
+    }
+
+    .cell-7::after {
+        content: '7';
+    }
+
+    .cell-8 {
+        background: #77ffaa;
+    }
+
+    .cell-8::after {
+        content: '8';
+    }
+
+    .cell-9 {
+        background: #77eedd;
+    }
+
+    .cell-9::after {
+        content: '9';
+    }
+
+    .cell-10 {
+        background: #88eeff;
+    }
+
+    .cell-10::after {
+        content: '10';
+    }
+
+    .cell-11 {
+        background: #99ffaa;
+    }
+
+    .cell-11::after {
+        content: '11';
+    }
+
+    .cell-12 {
+        background: #10aaff;
+    }
+
+    .cell-12::after {
+        content: '12';
+    }
+
+    .cell-13 {
+        background: #10bbaa;
+    }
+
+    .cell-13::after {
+        content: '13';
+    }
+
+    .cell-14 {
+        background: #13ccee;
+    }
+
+    .cell-14::after {
+        content: '14';
+    }
+
+    .cell-15 {
+        background: #15ddee;
+    }
+
+    .cell-15::after {
+        content: '15';
+    }
+
+    .gridster-cell {
+
+    }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="row">
+        <div class="gridster" id="gd">
+            <div class="gridster-content">
+                <div class="gridster-cell cell-0 gridster-top-1 gridster-left-1"></div>
+                <div class="gridster-cell cell-1 gridster-top-1 gridster-left-2"></div>
+                <div class="gridster-cell cell-2 gridster-top-1 gridster-left-3"></div>
+                <div class="gridster-cell cell-3 gridster-top-1 gridster-left-4"></div>
+                <div class="gridster-cell cell-4 gridster-top-2 gridster-left-1"></div>
+                <div class="gridster-cell cell-5 gridster-top-2 gridster-left-2"></div>
+                <div class="gridster-cell cell-6 gridster-top-2 gridster-left-3"></div>
+                <div class="gridster-cell cell-7 gridster-top-2 gridster-left-4"></div>
+                <div class="gridster-cell cell-8 gridster-top-3 gridster-left-1"></div>
+                <div class="gridster-cell cell-9 gridster-top-3 gridster-left-2"></div>
+                <div class="gridster-cell cell-10 gridster-top-3 gridster-left-3"></div>
+                <div class="gridster-cell cell-11 gridster-top-3 gridster-left-4"></div>
+                <div class="gridster-cell cell-12 gridster-top-4 gridster-left-1"></div>
+                <div class="gridster-cell cell-13 gridster-top-4 gridster-left-2"></div>
+                <div class="gridster-cell cell-14 gridster-top-4 gridster-left-3"></div>
+                <div class="gridster-cell cell-15 gridster-top-4 gridster-left-4"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    YUI({ filter:'raw' }).use('aui-gridster', function(Y) {
+        window.Y = Y;
+        new Y.Gridster({
+            boundingBox: '#gd',
+            contentBox: '#gd .gridster-content',
+            edges: 4
+        }).render();
+    });
+</script>
+</body>
+</html>

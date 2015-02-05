@@ -1,0 +1,29 @@
+{
+    "aui-gridster": {
+        "requires": [
+            "dd-drag",
+            "dd-drop",
+            "dd-proxy",
+            "widget",
+            "widget-autohide",
+            "widget-position",
+            "widget-position-align",
+            "widget-position-constrain",
+            "widget-stack",
+            "widget-stdmod",
+            "aui-classnamemanager",
+            "aui-component",
+            "aui-debounce",
+            "aui-widget-cssclass",
+            "aui-widget-toggle",
+            "aui-widget-transition",
+            "aui-widget-trigger",
+            "aui-widget-position-align-suggestion",
+            "aui-node-base",
+            "event-resize",
+            "aui-node",
+            "aui-component"
+        ],
+        "skinnable": true
+    }
+}
