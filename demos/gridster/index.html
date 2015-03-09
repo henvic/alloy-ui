@@ -148,7 +148,17 @@
     }
 
     .gridster-cell {
+    }
 
+    .grow-right-bottom {
+        border-right: 3px solid #544fff;
+        border-bottom: 3px solid #544fff;
+        width: 40px;
+        height: 40px;
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        cursor: pointer;
     }
     </style>
 </head>
@@ -158,7 +168,9 @@
         <div class="gridster" id="gd">
             <div class="gridster-content">
                 <div class="gridster-cell cell-0 gridster-top-1 gridster-left-1"></div>
-                <div class="gridster-cell cell-1 gridster-top-1 gridster-left-2"></div>
+                <div class="gridster-cell cell-1 gridster-top-1 gridster-left-2">
+                    <div class="grow-right-bottom"></div>
+                </div>
                 <div class="gridster-cell cell-2 gridster-top-1 gridster-left-3"></div>
                 <div class="gridster-cell cell-3 gridster-top-1 gridster-left-4"></div>
                 <div class="gridster-cell cell-4 gridster-top-2 gridster-left-1"></div>
