@@ -166,23 +166,24 @@
 <body>
 <div class="container">
     <div class="row">
+        <button id="reset">reset &amp; randomize</button>
         <div class="gridster" id="gd">
             <div class="gridster-content">
-                <div class="gridster-cell cell-0 gridster-top-1 gridster-left-1" data-cell="0">x</div>
-                <div class="gridster-cell cell-1 gridster-top-1 gridster-left-2" data-cell="1">x</div>
-                <div class="gridster-cell cell-2 gridster-top-1 gridster-left-3" data-cell="2">x</div>
-                <div class="gridster-cell cell-3 gridster-top-1 gridster-left-4" data-cell="3">x</div>
-                <div class="gridster-cell cell-4 gridster-top-2 gridster-left-1" data-cell="4">x</div>
-                <div class="gridster-cell cell-5 gridster-top-2 gridster-left-2" data-cell="5">x</div>
-                <div class="gridster-cell cell-6 gridster-top-2 gridster-left-3" data-cell="6">x</div>
-                <div class="gridster-cell cell-7 gridster-top-2 gridster-left-4" data-cell="7">x</div>
-                <div class="gridster-cell cell-8 gridster-top-3 gridster-left-1" data-cell="8">x</div>
-                <div class="gridster-cell cell-9 gridster-top-3 gridster-left-2" data-cell="9">x</div>
+                <div class="gridster-cell cell-0 gridster-top-1 gridster-left-1" data-cell="0"></div>
+                <div class="gridster-cell cell-1 gridster-top-1 gridster-left-2" data-cell="1"></div>
+                <div class="gridster-cell cell-2 gridster-top-1 gridster-left-3" data-cell="2"></div>
+                <div class="gridster-cell cell-3 gridster-top-1 gridster-left-4" data-cell="3"></div>
+                <div class="gridster-cell cell-4 gridster-top-2 gridster-left-1" data-cell="4"></div>
+                <div class="gridster-cell cell-5 gridster-top-2 gridster-left-2" data-cell="5"></div>
+                <div class="gridster-cell cell-6 gridster-top-2 gridster-left-3" data-cell="6"></div>
+                <div class="gridster-cell cell-7 gridster-top-2 gridster-left-4" data-cell="7"></div>
+                <div class="gridster-cell cell-8 gridster-top-3 gridster-left-1" data-cell="8"></div>
+                <div class="gridster-cell cell-9 gridster-top-3 gridster-left-2" data-cell="9"></div>
                 <div class="gridster-cell cell-10 gridster-top-3 gridster-left-3" data-cell="10"></div>
                 <div class="gridster-cell cell-11 gridster-top-3 gridster-left-4" data-cell="11"></div>
-                <div class="gridster-cell cell-12 gridster-top-4 gridster-left-1" data-cell="12">x</div>
-                <div class="gridster-cell cell-13 gridster-top-4 gridster-left-2" data-cell="13">x</div>
-                <div class="gridster-cell cell-14 gridster-top-4 gridster-left-3" data-cell="14">x</div>
+                <div class="gridster-cell cell-12 gridster-top-4 gridster-left-1" data-cell="12"></div>
+                <div class="gridster-cell cell-13 gridster-top-4 gridster-left-2" data-cell="13"></div>
+                <div class="gridster-cell cell-14 gridster-top-4 gridster-left-3" data-cell="14"></div>
                 <div class="gridster-cell cell-15 gridster-top-4 gridster-left-4" data-cell="15"></div>
             </div>
         </div>
@@ -194,12 +195,29 @@
 </div>
 <script>
     YUI({ filter:'raw' }).use('aui-gridster', function(Y) {
-        window.Y = Y;
-        new Y.Gridster({
+        var reset = Y.one('#reset'),
+            gridster;
+
+        gridster = new Y.Gridster({
             boundingBox: '#gd',
             contentBox: '#gd .gridster-content',
             edges: 4
         }).render();
+
+
+        reset.on('click', function() {
+            var counter;
+
+            for (counter = 0; counter < 16; counter += 1) {
+                if (Math.floor(Math.random() * 10) < 3) {
+                    Y.one('.cell-' + counter).setHTML('x');
+                } else {
+                    Y.one('.cell-' + counter).setHTML('');
+                }
+            }
+
+            gridster.update();
+        });
     });
 </script>
 </body>
