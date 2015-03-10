@@ -177,9 +177,9 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
         });
     },
 
-    toggleControllers: function(map) {
+    toggleControllers: function(freeAreas) {
         this.hideAllControllers();
-        this.getFreeAreas(map).forEach(function(positions) {
+        freeAreas.forEach(function(positions) {
             if (positions.length !== 4) {
                 return;
             }
@@ -247,14 +247,19 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
             arrows = this.get('arrows').getDOMNodes(),
             controller = this.get('controllers')[cell];
 
+        this.set('activeCell', Number.parseInt(cell));
+
         arrows.forEach(function (arrow) {
             this.updateArrow(arrow, controller, cell);
         }, this);
     },
 
     update: function() {
-        var map = this.map();
-        this.toggleControllers(map);
+        var map = this.map(),
+            freeAreas = this.getFreeAreas(map);
+
+        this.set('freeAreas', freeAreas);
+        this.toggleControllers(freeAreas);
     },
 
     initializer: function() {
@@ -271,7 +276,61 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
         this.update();
 
         gridsterCells.on('mouseenter', A.bind(this.tracker, this));
+        arrows.on('click', A.bind(this.arrowClickHandler, this));
         this._eventHandles = [arrows, gridsterCells];
+    },
+
+    getActiveArea: function(direction, activeCell, areas) {
+        var directionIndex,
+            counter,
+            length;
+
+        switch (direction) {
+            case 'southeast':
+                directionIndex = 0;
+                break;
+            case 'southwest':
+                directionIndex = 1;
+                break;
+            case 'northeast':
+                directionIndex = 2;
+                break;
+            default:
+                directionIndex = 3;
+        }
+
+        for (counter = 0, length = areas.length; counter < length; counter += 1) {
+            if (areas[counter].length !== 4) {
+                continue;
+            }
+
+            if (areas[counter][directionIndex] === activeCell) {
+                return areas[counter];
+            }
+        }
+    },
+
+    getExpansionCell: function(activeArea, activeCell) {
+        var nodes = this.get('spacesNodes'),
+            counter,
+            length;
+
+        for (counter = 0, length = activeArea.length; counter < length; counter += 1) {
+            if (!this.isEmpty(nodes[activeArea[counter]])) {
+                return activeArea[counter];
+            }
+        }
+
+        return activeCell;
+    },
+
+    arrowClickHandler: function(event) {
+        var direction = event.target.getData('direction'),
+            activeCell = this.get('activeCell'),
+            freeAreas = this.get('freeAreas'),
+            activeArea = this.getActiveArea(direction, activeCell, freeAreas);
+
+            console.log('expansion cell = ' + this.getExpansionCell(activeArea, activeCell));
     },
 
     destructor: function() {
