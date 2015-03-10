@@ -1,6 +1,10 @@
 /**
  * The Gridster Utility
  *
+ * NOTICE: THIS IS A PROTOTYPE. DON'T USE IT IN PRODUCTION, EVER.
+ *
+ * The code is not clean, neither maintainable.
+ *
  * @module aui-gridster
  */
 
@@ -34,7 +38,7 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
         this.set('spacesMatrix', spacesMatrix);
     },
 
-    createMap: function() {
+    map: function() {
         var counter,
             spaces = [];
 
@@ -42,159 +46,224 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
             spaces[counter] = counter;
         }
 
-        // spaces[2] = 1;
-        // spaces[5] = 1;
-        // spaces[6] = 1;
-        // spaces[11] = 16;
-        // spaces[12] = 16;
-        // spaces[15] = 16;
-        // spaces[9] = 14;
-        // spaces[10] = 14;
-        // spaces[13] = 14;
-        // spaces[4] = 3;
-        // spaces[7] = 3;
-        // spaces[8] = 3;
-        // spaces[6] = 7;
-        // spaces[10] = 7;
-        // spaces[11] = 7;
-        // spaces[6] = 13;
-        // spaces[9] = 5;
-        // spaces[10] = 5;
-        // spaces[5] = 13;
-        // spaces[6] = 13;
-        // spaces[7] = 13;
-        // spaces[9] = 13;
-        // spaces[10] =13;
-        // spaces[11] = 13;
-        // spaces[14] = 13;
-        // spaces[15] = 13;
+        // spaces[1] = 0;
+        // spaces[2] = 0;
+        // spaces[5] = 0;
 
         this.set('spaces', spaces);
         this._buildMatrix();
     },
 
+    getFreeAreas: function() {
+        var edges = this.get('edges'),
+            freePositions = [],
+            freeAreas = [],
+            counter,
+            nodes = this.get('spacesNodes'),
+            series = [],
+            currentNode;
+
+        for (counter = 0; counter < this.get('spacesTotal'); counter += 1) {
+            currentNode = nodes[counter];
+
+            if (this.isEmpty(currentNode)) {
+                freePositions.push(counter);
+            }
+
+            series.push(counter);
+        }
+
+        series.forEach(function (vertex) {
+            var usedPositions = 0;
+
+            if (vertex % edges === 3) {
+                return;
+            }
+
+            if (Math.floor(vertex / 4) % 4 === edges - 1) {
+                return;
+            }
+
+            if (freePositions.indexOf(vertex) === -1) {
+                usedPositions += 1;
+            }
+
+            if (freePositions.indexOf(vertex + 1) === -1) {
+                usedPositions += 1;
+            }
+
+            if (freePositions.indexOf(vertex + edges) === -1) {
+                usedPositions += 1;
+            }
+
+            if (freePositions.indexOf(vertex + edges + 1) === -1) {
+                usedPositions += 1;
+            }
+
+            if (usedPositions > 1) {
+                return;
+            }
+
+
+            freeAreas.push([
+                vertex,
+                vertex + 1,
+                vertex + edges,
+                vertex + edges + 1
+            ]);
+
+            // if (freePositions.indexOf(vertex + 2) === -1 ||
+            //     freePositions.indexOf(vertex + edges + 2) === -1 ||
+            //     freePositions.indexOf(vertex + edges + 2) === -1 ||
+            //     freePositions.indexOf(vertex + (2 * edges)) === -1 ||
+            //     freePositions.indexOf(vertex + (2 * edges) + 1) === -1 ||
+            //     freePositions.indexOf(vertex + (2 * edges) + 2) === -1 ) {
+            //     return;
+            // }
+
+            // freeAreas.push([
+            //     vertex,
+            //     vertex + 1,
+            //     vertex + 2,
+            //     vertex + edges,
+            //     vertex + edges + 1,
+            //     vertex + edges + 2,
+            //     vertex + (2 * edges),
+            //     vertex + (2 * edges) + 1,
+            //     vertex + (2 * edges) + 2
+            // ]);
+        });
+
+        return freeAreas;
+    },
+
+    displayControllers: function (positions) {
+        var controllers = this.get('controllers');
+
+        controllers[positions[0]].southeast = true;
+        controllers[positions[1]].southwest = true;
+        controllers[positions[2]].northeast = true;
+        controllers[positions[3]].northwest = true;
+    },
+
+    hideAllControllers: function() {
+        var controllers = this.get('controllers');
+
+        controllers.forEach(function(controller) {
+            controller.southeast = false;
+            controller.southwest = false;
+            controller.northeast = false;
+            controller.northwest = false;
+        });
+    },
+
+    toggleControllers: function(map) {
+        this.hideAllControllers();
+        this.getFreeAreas(map).forEach(this.displayControllers, this);
+    },
+
+    setupControllers: function() {
+        var counter,
+            controllers = [],
+            edges = this.get('edges');
+
+        for (counter = 0; counter < Math.pow(edges, 2); counter += 1) {
+            controllers[counter] = {};
+        }
+
+        this.set('controllers', controllers);
+    },
+
+    updateArrow: function (arrow, controller, cell) {
+        ['northeast', 'northwest', 'southeast', 'southwest'].forEach(function (pos) {
+            var region,
+                node,
+                arrowType = 'gridster-arrow-' + pos,
+                computedArrowStyle;
+
+            if (!arrow.classList.contains(arrowType)) {
+                return;
+            }
+
+            if (!controller[pos]) {
+                arrow.style.display = 'none';
+                return;
+            }
+
+            arrow.style.display = 'block';
+
+            node = Y.one(this.get('spacesNodes')[cell]);
+
+            region = node.get('region');
+
+            computedArrowStyle = window.getComputedStyle(arrow);
+
+            if (pos === 'northeast' || pos === 'northwest') {
+                arrow.style.top = region[1] + 'px';
+            }
+
+            if (pos === 'southeast' || pos === 'southwest') {
+                arrow.style.top = (region.bottom - computedArrowStyle.height.slice(0, -2)) + 'px';
+            }
+
+            if (pos === 'northwest' || pos === 'southwest') {
+                arrow.style.left = region[0] + 'px';
+            }
+
+            if (pos === 'northeast' || pos === 'southeast') {
+                arrow.style.left = (region.right - computedArrowStyle.width.slice(0, -2)) + 'px';
+            }
+        }, this);
+    },
+
+    tracker: function (event) {
+        var cell = event.target.getData('cell'),
+            arrows = this.get('arrows').getDOMNodes(),
+            controller = this.get('controllers')[cell];
+
+        arrows.forEach(function (arrow) {
+            this.updateArrow(arrow, controller, cell);
+        }, this);
+    },
+
     initializer: function() {
+        var map,
+            arrows = Y.all('.gridster-arrow'),
+            gridsterCells = Y.all('#' + this.get('contentBox').get('id') + ' .gridster-cell'),
+            spacesNodes = gridsterCells._nodes;
+
+        window.Y = Y;
+
+        this.setupControllers();
+
+        this.set('arrows', arrows);
         this.set('spacesTotal', Math.pow(this.get('edges'), 2));
-        this.set('spacesNodes', Y.all('#' + this.get('contentBox').get('id') + ' .gridster-cell')._nodes);
+        this.set('spacesNodes', spacesNodes);
 
-        this.createMap();
+        map = this.map();
 
-        this._eventHandles = [];
+        this.toggleControllers(map);
+
+        this._eventHandles = [arrows, gridsterCells];
+
+        gridsterCells.on('mouseenter', A.bind(this.tracker, this));
     },
 
     destructor: function() {
         (new A.EventHandle(this._eventHandles)).detach();
     },
 
-    getExpansions: function(pos) {
-        return [
-            this.northeast(pos),
-            this.southeast(pos),
-            this.southwestern(pos),
-            this.northwestern(pos)
-        ];
+    isEmpty: function(node) {
+        return node.innerHTML === '';
     },
 
-    isNotEmpty: function(node) {
-        return node.innerHTML !== '';
-    },
-
-    areNotEmpty: function(nodes) {
-        return nodes.some(function(node) {
-            return this.isNotEmpty(node);
-        }, this);
-    },
-
-    areNotEmptyByCandidates: function(candidates) {
-        var nodes = this.get('spacesNodes');
-
-        return this.areNotEmpty(candidates.map(function(n) {
-            return nodes[n];
-        }));
-    },
-
-    isZoneFree: function(candidates, top, right, size) {
-        return (top < size || right < size ||
-            this.areNotEmptyByCandidates(candidates));
-    },
-
-    northeastListVertexes: function(pos, minDistance) {
-        var external,
-            internal,
-            edges = this.get('edges'),
-            vertexes = [],
-            counter;
-
-        for (counter = 0; counter < minDistance; counter += 1) {
-            for (external = counter + 1; external >= 0; external -= 1) {
-                if (external !== counter + 1) {
-                    internal = counter + 1;
-                    vertexes.push(pos - (edges * external) + internal);
-                    continue;
-                }
-
-                for (internal = 0; internal <= external; internal += 1) {
-                    vertexes.push(pos - (edges * external) + internal);
-                }
-            }
-        }
-
-        return vertexes;
-    },
-
-    northeast: function(pos) {
-        var edges = this.get('edges'),
-            candidates,
-            regions = [],
-            top = Math.floor(pos / edges),
-            right = - (pos % edges) + edges - 1,
-            minDistance = Math.min(top, right),
-            region,
-            ring;
-
-        candidates = this.northeastListVertexes(pos, minDistance);
-
-        for (ring = 1; ring < edges; ring += 1) {
-            region = candidates.splice(0, 3 + 2 * (ring - 1));
-
-            if (this.isZoneFree(candidates, top, right, ring)) {
-                break;
-            }
-
-            regions.push(region);
-        }
-
-        return regions;
-    },
-
-    southeast: function() {
-
-    },
-
-    northwestern: function() {
-
-    },
-
-    southwestern: function() {
-
-    },
-
-    getExpansionCorners: function() {
-        var counter,
-            spacesTotal = this.get('spacesTotal');
-
-        for (counter = 0; counter < spacesTotal; counter += 1) {
-            console.log(this.getExpansions(counter));
-        }
-    },
-
-    renderUI: function() {
+    updateAreas: function() {
         var counter,
             least,
             currentNode,
             currentEl,
             nodes = this.get('spacesNodes'),
-            notDisplayedClassName = A.getClassName('gridster', 'cell', 'not', 'displayed'),
+            notDisplayedClassName = 'gridster-cell-not-displayed',
             spacesMatrix = this.get('spacesMatrix');
 
         for (counter = 0; counter < this.get('spacesTotal'); counter += 1) {
@@ -220,8 +289,10 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
                 currentNode.style.top = ((Math.ceil(least / this.get('edges')) - 1) * 25) + '%';
             }
         }
+    },
 
-        this.getExpansionCorners();
+    renderUI: function() {
+        this.updateAreas();
     }
 }, {
     /**
@@ -231,7 +302,7 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
      * @type String
      * @static
      */
-    CSS_PREFIX: A.getClassName('gridster'),
+    CSS_PREFIX: 'gridster',
 
     /**
      * Static property used to define the default attribute
