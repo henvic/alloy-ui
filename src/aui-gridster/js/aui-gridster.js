@@ -112,27 +112,47 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
                 vertex + edges + 1
             ]);
 
-            // if (freePositions.indexOf(vertex + 2) === -1 ||
-            //     freePositions.indexOf(vertex + edges + 2) === -1 ||
-            //     freePositions.indexOf(vertex + edges + 2) === -1 ||
-            //     freePositions.indexOf(vertex + (2 * edges)) === -1 ||
-            //     freePositions.indexOf(vertex + (2 * edges) + 1) === -1 ||
-            //     freePositions.indexOf(vertex + (2 * edges) + 2) === -1 ) {
-            //     return;
-            // }
+            if (freePositions.indexOf(vertex + 2) === -1) {
+                usedPositions += 1;
+            }
 
-            // freeAreas.push([
-            //     vertex,
-            //     vertex + 1,
-            //     vertex + 2,
-            //     vertex + edges,
-            //     vertex + edges + 1,
-            //     vertex + edges + 2,
-            //     vertex + (2 * edges),
-            //     vertex + (2 * edges) + 1,
-            //     vertex + (2 * edges) + 2
-            // ]);
+            if (freePositions.indexOf(vertex + edges + 2) === -1) {
+                usedPositions += 1;
+            }
+
+            if (freePositions.indexOf(vertex + (2 * edges)) === -1) {
+                usedPositions += 1;
+            }
+
+            if (freePositions.indexOf(vertex + (2 * edges) + 1) === -1) {
+                usedPositions += 1;
+            }
+
+            if (freePositions.indexOf(vertex + (2 * edges) + 2) === -1) {
+                usedPositions += 1;
+            }
+
+            if (usedPositions > 1) {
+                return;
+            }
+
+            freeAreas.push([
+                vertex,
+                vertex + 1,
+                vertex + edges,
+                vertex + edges + 1,
+                vertex + 2,
+                vertex + edges + 2,
+                vertex + (2 * edges),
+                vertex + (2 * edges) + 1,
+                vertex + (2 * edges) + 2
+            ]);
+
         });
+
+        if (freePositions.length === Math.pow(edges, 2)) {
+            freeAreas.push(series.slice());
+        }
 
         return freeAreas;
     },
@@ -159,7 +179,13 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
 
     toggleControllers: function(map) {
         this.hideAllControllers();
-        this.getFreeAreas(map).forEach(this.displayControllers, this);
+        this.getFreeAreas(map).forEach(function(positions) {
+            if (positions.length !== 4) {
+                return;
+            }
+
+            this.displayControllers(positions);
+        }, this);
     },
 
     setupControllers: function() {
@@ -192,7 +218,7 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
 
             arrow.style.display = 'block';
 
-            node = Y.one(this.get('spacesNodes')[cell]);
+            node = A.one(this.get('spacesNodes')[cell]);
 
             region = node.get('region');
 
@@ -226,13 +252,15 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
         }, this);
     },
 
-    initializer: function() {
-        var map,
-            arrows = Y.all('.gridster-arrow'),
-            gridsterCells = Y.all('#' + this.get('contentBox').get('id') + ' .gridster-cell'),
-            spacesNodes = gridsterCells._nodes;
+    update: function() {
+        var map = this.map();
+        this.toggleControllers(map);
+    },
 
-        window.Y = Y;
+    initializer: function() {
+        var arrows = A.all('.gridster-arrow'),
+            gridsterCells = A.all('#' + this.get('contentBox').get('id') + ' .gridster-cell'),
+            spacesNodes = gridsterCells._nodes;
 
         this.setupControllers();
 
@@ -240,13 +268,10 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
         this.set('spacesTotal', Math.pow(this.get('edges'), 2));
         this.set('spacesNodes', spacesNodes);
 
-        map = this.map();
-
-        this.toggleControllers(map);
-
-        this._eventHandles = [arrows, gridsterCells];
+        this.update();
 
         gridsterCells.on('mouseenter', A.bind(this.tracker, this));
+        this._eventHandles = [arrows, gridsterCells];
     },
 
     destructor: function() {
