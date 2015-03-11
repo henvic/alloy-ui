@@ -59,10 +59,11 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
         var counter,
             freePositions = [],
             currentNode,
-            nodes = this.get('spacesNodes');
+            nodes = this.get('spacesNodes'),
+            spaces = this.get('spaces');
 
         for (counter = 0; counter < this.get('spacesTotal'); counter += 1) {
-            currentNode = nodes[counter];
+            currentNode = nodes[spaces[counter]];
 
             if (this.isEmpty(currentNode)) {
                 freePositions.push(counter);
