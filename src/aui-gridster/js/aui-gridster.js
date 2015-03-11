@@ -359,6 +359,7 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
             }
 
             this.update(spaces);
+            this.updateGridTracker(activeArea[0]);
     },
 
     destructor: function() {
