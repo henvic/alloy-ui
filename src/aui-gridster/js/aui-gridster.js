@@ -340,16 +340,20 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
             freeAreas = this.get('freeAreas'),
             activeArea = this.getActiveArea(direction, activeCell, freeAreas),
             expansionCell = this.getExpansionCell(activeArea, activeCell),
-            spaces = this.get('spaces');
+            spaces = this.get('spaces'),
+            nodes = this.get('spacesNodes'),
+            counter,
+            length;
 
-            console.log('expansion cell = ' + expansionCell);
-            console.log(activeArea);
-
-            activeArea.forEach(function (cell) {
-                if (cell !== expansionCell) {
-                    spaces[cell] = expansionCell;
+            if (expansionCell !== activeArea[0]) {
+                while (nodes[expansionCell].childNodes.length > 0) {
+                    nodes[activeArea[0]].appendChild(nodes[expansionCell].childNodes[0]);
                 }
-            }, this);
+            }
+
+            for (counter = 1, length = activeArea.length; counter < length; counter += 1) {
+                spaces[activeArea[counter]] = spaces[activeArea[0]];
+            }
 
             this.update(spaces);
     },
