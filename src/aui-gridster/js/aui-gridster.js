@@ -243,9 +243,12 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
         }, this);
     },
 
-    gridTracker: function (event) {
-        var cell = event.target.getData('cell'),
-            arrows = this.get('arrows').getDOMNodes(),
+    gridTrackerHandler: function (event) {
+        this.updateGridTracker(event.target.getData('cell'));
+    },
+
+    updateGridTracker: function (cell) {
+        var arrows = this.get('arrows').getDOMNodes(),
             controller = this.get('controllers')[cell];
 
         this.set('activeCell', Number.parseInt(cell));
@@ -285,7 +288,7 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
         this.createMap();
         this.update();
 
-        gridsterCells.on('mouseenter', A.bind(this.gridTracker, this));
+        gridsterCells.on('mouseenter', A.bind(this.gridTrackerHandler, this));
         arrows.on('click', A.bind(this.arrowClickHandler, this));
         this._eventHandles = [arrows, gridsterCells];
     },
