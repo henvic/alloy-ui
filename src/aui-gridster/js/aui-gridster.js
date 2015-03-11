@@ -55,14 +55,11 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
         this._buildMatrix();
     },
 
-    getFreeAreas: function() {
-        var edges = this.get('edges'),
+    getFreePositions: function() {
+        var counter,
             freePositions = [],
-            freeAreas = [],
-            counter,
-            nodes = this.get('spacesNodes'),
-            series = [],
-            currentNode;
+            currentNode,
+            nodes = this.get('spacesNodes');
 
         for (counter = 0; counter < this.get('spacesTotal'); counter += 1) {
             currentNode = nodes[counter];
@@ -70,7 +67,20 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
             if (this.isEmpty(currentNode)) {
                 freePositions.push(counter);
             }
+        }
 
+        return freePositions;
+    },
+
+    getFreeAreas: function(freePositions) {
+        var edges = this.get('edges'),
+            freeAreas = [],
+            counter,
+            series = [];
+
+        freePositions = this.getFreePositions();
+
+        for (counter = 0; counter < this.get('spacesTotal'); counter += 1) {
             series.push(counter);
         }
 
@@ -201,7 +211,57 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
         this.set('controllers', controllers);
     },
 
-    updateArrow: function (arrow, controller, cell) {
+    isPositionFree: function (cell) {
+        var freePositions = this.get('freePositions'),
+            spacesTotal = this.get('spacesTotal');
+
+        if (cell < 0 || cell >= spacesTotal) {
+            return true;
+        }
+
+        return (freePositions.indexOf(cell) !== -1);
+    },
+
+    areNortheastAdjFree: function (cell) {
+        var edges = this.get('edges');
+
+        return (this.isPositionFree(cell - edges + 1) &&
+            this.isPositionFree(cell - edges) &&
+            this.isPositionFree(cell + 1));
+    },
+
+    areNorthwestAdjFree: function (cell) {
+        var edges = this.get('edges');
+
+        return (this.isPositionFree(cell - edges - 1) &&
+            this.isPositionFree(cell - edges) &&
+            this.isPositionFree(cell - 1));
+    },
+
+    areSoutheastAdjFree: function (cell) {
+    var edges = this.get('edges');
+
+    return (this.isPositionFree(cell + edges + 1) &&
+        this.isPositionFree(cell + edges) &&
+        this.isPositionFree(cell + 1));
+    },
+
+    areSouthwestAdjFree: function (cell) {
+    var edges = this.get('edges');
+
+    return (this.isPositionFree(cell + edges - 1) &&
+        this.isPositionFree(cell + edges) &&
+        this.isPositionFree(cell - 1));
+    },
+
+    updateArrow: function (arrow, cell, pos) {
+
+    },
+
+    updateArrows: function (arrow, cell) {
+        var controllers = this.get('controllers'),
+            controller;
+
         ['northeast', 'northwest', 'southeast', 'southwest'].forEach(function (pos) {
             var region,
                 node,
@@ -212,7 +272,32 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
                 return;
             }
 
+            controller = controllers[cell];
+
             if (!controller[pos]) {
+                arrow.style.display = 'none';
+                return;
+            }
+
+            // @todo should verify if it's part of an area larger than 1 and if it is,
+            // return earlier if can't expand anymore
+
+            if (pos === 'northeast' && !this.areNortheastAdjFree(cell)) {
+                arrow.style.display = 'none';
+                return;
+            }
+
+            if (pos === 'northwest' && !this.areNorthwestAdjFree(cell)) {
+                arrow.style.display = 'none';
+                return;
+            }
+
+            if (pos === 'southeast' && !this.areSoutheastAdjFree(cell)) {
+                arrow.style.display = 'none';
+                return;
+            }
+
+            if (pos === 'southwest' && !this.areSouthwestAdjFree(cell)) {
                 arrow.style.display = 'none';
                 return;
             }
@@ -248,21 +333,22 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
     },
 
     updateGridTracker: function (cell) {
-        var arrows = this.get('arrows').getDOMNodes(),
-            controller = this.get('controllers')[cell];
+        var arrows = this.get('arrows').getDOMNodes();
 
-        this.set('activeCell', Number.parseInt(cell));
+        cell = Number.parseInt(cell);
+
+        this.set('activeCell', cell);
 
         arrows.forEach(function (arrow) {
-            this.updateArrow(arrow, controller, cell);
+            this.updateArrows(arrow, cell);
         }, this);
     },
 
     update: function(spaces) {
-        var freeAreas;
+        var freePositions = this.getFreePositions(),
+            freeAreas = this.getFreeAreas(freePositions);
 
-        freeAreas = this.getFreeAreas();
-
+        this.set('freePositions', freePositions);
         this.set('freeAreas', freeAreas);
         this.toggleControllers(freeAreas);
 
