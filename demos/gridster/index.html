@@ -206,7 +206,8 @@
 
 
         reset.on('click', function() {
-            var counter;
+            var counter,
+                series = [];
 
             for (counter = 0; counter < 16; counter += 1) {
                 if (Math.floor(Math.random() * 10) < 2) {
@@ -214,9 +215,11 @@
                 } else {
                     Y.one('.cell-' + counter).setHTML('');
                 }
+
+                series.push(counter);
             }
 
-            gridster.update();
+            gridster.update(series);
         });
     });
 </script>
