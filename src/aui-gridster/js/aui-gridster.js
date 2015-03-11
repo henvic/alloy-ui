@@ -38,7 +38,7 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
         this.set('spacesMatrix', spacesMatrix);
     },
 
-    map: function() {
+    createMap: function() {
         var counter,
             spaces = [];
 
@@ -46,10 +46,11 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
             spaces[counter] = counter;
         }
 
-        // spaces[1] = 0;
-        // spaces[2] = 0;
-        // spaces[5] = 0;
+        this.set('spaces', spaces);
+        this._buildMatrix();
+    },
 
+    setMap: function(spaces) {
         this.set('spaces', spaces);
         this._buildMatrix();
     },
@@ -242,7 +243,7 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
         }, this);
     },
 
-    tracker: function (event) {
+    gridTracker: function (event) {
         var cell = event.target.getData('cell'),
             arrows = this.get('arrows').getDOMNodes(),
             controller = this.get('controllers')[cell];
@@ -254,12 +255,19 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
         }, this);
     },
 
-    update: function() {
-        var map = this.map(),
-            freeAreas = this.getFreeAreas(map);
+    update: function(spaces) {
+        var freeAreas;
+
+        freeAreas = this.getFreeAreas();
 
         this.set('freeAreas', freeAreas);
         this.toggleControllers(freeAreas);
+
+        if (spaces) {
+            this.setMap(spaces);
+        }
+
+        this.renderUI();
     },
 
     initializer: function() {
@@ -267,15 +275,17 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
             gridsterCells = A.all('#' + this.get('contentBox').get('id') + ' .gridster-cell'),
             spacesNodes = gridsterCells._nodes;
 
+
         this.setupControllers();
 
         this.set('arrows', arrows);
         this.set('spacesTotal', Math.pow(this.get('edges'), 2));
         this.set('spacesNodes', spacesNodes);
 
+        this.createMap();
         this.update();
 
-        gridsterCells.on('mouseenter', A.bind(this.tracker, this));
+        gridsterCells.on('mouseenter', A.bind(this.gridTracker, this));
         arrows.on('click', A.bind(this.arrowClickHandler, this));
         this._eventHandles = [arrows, gridsterCells];
     },
@@ -328,9 +338,20 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
         var direction = event.target.getData('direction'),
             activeCell = this.get('activeCell'),
             freeAreas = this.get('freeAreas'),
-            activeArea = this.getActiveArea(direction, activeCell, freeAreas);
+            activeArea = this.getActiveArea(direction, activeCell, freeAreas),
+            expansionCell = this.getExpansionCell(activeArea, activeCell),
+            spaces = this.get('spaces');
 
-            console.log('expansion cell = ' + this.getExpansionCell(activeArea, activeCell));
+            console.log('expansion cell = ' + expansionCell);
+            console.log(activeArea);
+
+            activeArea.forEach(function (cell) {
+                if (cell !== expansionCell) {
+                    spaces[cell] = expansionCell;
+                }
+            }, this);
+
+            this.update(spaces);
     },
 
     destructor: function() {
