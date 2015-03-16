@@ -1,0 +1,70 @@
+.gridster {
+    position: relative;
+}
+
+.gridster-cell {
+    position: absolute;
+    font-size: 400%;
+    width: 25%;
+    height: 25%;
+}
+
+.gridster-cell[data-cell='0'],
+.gridster-cell[data-cell='1'],
+.gridster-cell[data-cell='2'],
+.gridster-cell[data-cell='3'] {
+    top: 0;
+}
+
+.gridster-cell[data-cell='4'],
+.gridster-cell[data-cell='5'],
+.gridster-cell[data-cell='6'],
+.gridster-cell[data-cell='7'] {
+    top: 25%;
+}
+
+.gridster-cell[data-cell='8'],
+.gridster-cell[data-cell='9'],
+.gridster-cell[data-cell='10'],
+.gridster-cell[data-cell='11'] {
+    top: 50%;
+}
+
+.gridster-cell[data-cell='12'],
+.gridster-cell[data-cell='13'],
+.gridster-cell[data-cell='14'],
+.gridster-cell[data-cell='15'] {
+    top: 75%;
+}
+
+.gridster-cell[data-cell='0'],
+.gridster-cell[data-cell='4'],
+.gridster-cell[data-cell='8'],
+.gridster-cell[data-cell='12'] {
+    left: 0;
+}
+
+.gridster-cell[data-cell='1'],
+.gridster-cell[data-cell='5'],
+.gridster-cell[data-cell='9'],
+.gridster-cell[data-cell='13'] {
+    left: 25%;
+}
+
+.gridster-cell[data-cell='2'],
+.gridster-cell[data-cell='6'],
+.gridster-cell[data-cell='10'],
+.gridster-cell[data-cell='14'] {
+    left: 50%;
+}
+
+.gridster-cell[data-cell='3'],
+.gridster-cell[data-cell='7'],
+.gridster-cell[data-cell='11'],
+.gridster-cell[data-cell='15'] {
+    left: 75%;
+}
+
+.gridster-cell-hidden {
+    display: none;
+}
