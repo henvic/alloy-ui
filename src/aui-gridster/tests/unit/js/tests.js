@@ -19,7 +19,7 @@ YUI.add('aui-gridster-tests', function(Y) {
             gridster = null;
         },
 
-        'should have three large blocks positioned': function() {
+        'should update to grid with three large blocks positioned': function() {
             var cells = gridster.get('cells'),
                 spaces = gridster.get('spaces'),
                 expectedSet,
@@ -70,6 +70,49 @@ YUI.add('aui-gridster-tests', function(Y) {
                     Assert.areSame('none', computedStyle.display, 'display for position ' + number);
                     return;
                 }
+
+                Assert.areSame('block', computedStyle.display, 'display for position ' + number);
+                Assert.areSame(expected[0], cell.style.top, 'top for position ' + number);
+                Assert.areSame(expected[1], cell.style.left, 'left for position ' + number);
+                Assert.areSame(expected[2], cell.style.height, 'height for position ' + number);
+                Assert.areSame(expected[3], cell.style.width, 'width for position ' + number);
+            }
+
+            for (pos = 0; pos < 16; pos += 1) {
+                testCell(pos);
+            }
+        },
+
+        'should have only base / small blocks positioned': function() {
+            var cells = gridster.get('cells'),
+                expectedSet,
+                pos;
+
+            // cell: [top, left, height, width]
+
+            expectedSet = [
+                ['0%', '0%', '25%', '25%'],
+                ['0%', '25%', '25%', '25%'],
+                ['0%', '50%', '25%', '25%'],
+                ['0%', '75%', '25%', '25%'],
+                ['25%', '0%', '25%', '25%'],
+                ['25%', '25%', '25%', '25%'],
+                ['25%', '50%', '25%', '25%'],
+                ['25%', '75%', '25%', '25%'],
+                ['50%', '0%', '25%', '25%'],
+                ['50%', '25%', '25%', '25%'],
+                ['50%', '50%', '25%', '25%'],
+                ['50%', '75%', '25%', '25%'],
+                ['75%', '0%', '25%', '25%'],
+                ['75%', '25%', '25%', '25%'],
+                ['75%', '50%', '25%', '25%'],
+                ['75%', '75%', '25%', '25%']
+            ];
+
+            function testCell (number) {
+                var expected = expectedSet[number],
+                    cell = cells[number],
+                    computedStyle = window.getComputedStyle(cell);
 
                 Assert.areSame('block', computedStyle.display, 'display for position ' + number);
                 Assert.areSame(expected[0], cell.style.top, 'top for position ' + number);
