@@ -64,9 +64,9 @@ YUI.add('aui-gridster-tests', function(Y) {
 
             function testCell (number) {
                 var expected = expectedSet[number],
-                    cell = cells[number],
+                    cell = cells.item(number),
                     level = levels[number],
-                    computedStyle = window.getComputedStyle(cell);
+                    computedStyle = window.getComputedStyle(cell.getDOMNode());
 
                 if (!expected) {
                     Assert.areSame('none', computedStyle.display, 'display for position ' + number);
@@ -75,10 +75,10 @@ YUI.add('aui-gridster-tests', function(Y) {
                 }
 
                 Assert.areSame('block', computedStyle.display, 'display for position ' + number);
-                Assert.areSame(expected[0], cell.style.top, 'top for position ' + number);
-                Assert.areSame(expected[1], cell.style.left, 'left for position ' + number);
-                Assert.areSame(expected[2], cell.style.height, 'height for position ' + number);
-                Assert.areSame(expected[3], cell.style.width, 'width for position ' + number);
+                Assert.areSame(expected[0], cell.getStyle('top'), 'top for position ' + number);
+                Assert.areSame(expected[1], cell.getStyle('left'), 'left for position ' + number);
+                Assert.areSame(expected[2], cell.getStyle('height'), 'height for position ' + number);
+                Assert.areSame(expected[3], cell.getStyle('width'), 'width for position ' + number);
                 Assert.areSame(expected[4], level);
             }
 
@@ -115,14 +115,14 @@ YUI.add('aui-gridster-tests', function(Y) {
 
             function testCell (number) {
                 var expected = expectedSet[number],
-                    cell = cells[number],
-                    computedStyle = window.getComputedStyle(cell);
+                    cell = cells.item(number),
+                    computedStyle = window.getComputedStyle(cell.getDOMNode());
 
                 Assert.areSame('block', computedStyle.display, 'display for position ' + number);
-                Assert.areSame(expected[0], cell.style.top, 'top for position ' + number);
-                Assert.areSame(expected[1], cell.style.left, 'left for position ' + number);
-                Assert.areSame(expected[2], cell.style.height, 'height for position ' + number);
-                Assert.areSame(expected[3], cell.style.width, 'width for position ' + number);
+                Assert.areSame(expected[0], cell.getStyle('top'), 'top for position ' + number);
+                Assert.areSame(expected[1], cell.getStyle('left'), 'left for position ' + number);
+                Assert.areSame(expected[2], cell.getStyle('height'), 'height for position ' + number);
+                Assert.areSame(expected[3], cell.getStyle('width'), 'width for position ' + number);
             }
 
             for (pos = 0; pos < 16; pos += 1) {

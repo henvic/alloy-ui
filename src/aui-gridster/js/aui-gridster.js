@@ -32,14 +32,15 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
     },
 
     initializer: function() {
-        var cellsNodeList = A.all('#' + this.get('contentBox').get('id') + ' .gridster-cell'),
-            cells = cellsNodeList._nodes;
+        var cells = A.all('#' + this.get('contentBox').get('id') + ' .gridster-cell');
 
         this.set('cells', cells);
 
         this.createMap();
 
-        this._eventHandles = [cellsNodeList];
+        cells.on('mouseover', A.bind(this.mouveOverHandler, this));
+
+        this._eventHandles = [cells];
     },
 
     destructor: function() {
@@ -49,10 +50,8 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
     updatePosition: function(cell) {
         var adjacents = [],
             spaces = this.get('spaces'),
-            nodes = this.get('cells'),
             levels = this.get('levels'),
-            currentNode = nodes[cell],
-            notDisplayedClassName = 'gridster-cell-hidden',
+            currentNode = this.get('cells').item(cell),
             level,
             first,
             counter;
@@ -64,7 +63,7 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
         }
 
         if (adjacents.length === 0) {
-            currentNode.classList.add(notDisplayedClassName);
+            currentNode.setStyle('display', 'none');
             levels[cell] = 0;
             return;
         }
@@ -75,12 +74,13 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
 
         first = Math.min.apply(this, adjacents);
 
-        currentNode.classList.remove(notDisplayedClassName);
-
-        currentNode.style.top = (Math.floor(first / 4) * 25) + '%';
-        currentNode.style.left = (first % 4) * 25 + '%';
-        currentNode.style.height = (level * 25) + '%';
-        currentNode.style.width = (level * 25) + '%';
+        currentNode.setStyles({
+            display: 'block',
+            top: (Math.floor(first / 4) * 25) + '%',
+            left: (first % 4) * 25 + '%',
+            height: (level * 25) + '%',
+            width: (level * 25) + '%'
+        });
     },
 
     updatePositions: function() {

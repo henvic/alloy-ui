@@ -61,7 +61,3 @@
 .gridster-cell:nth-child(4n) {
     left: 75%;
 }
-
-.gridster-cell-hidden {
-    display: none;
-}
