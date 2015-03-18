@@ -19,10 +19,11 @@ YUI.add('aui-gridster-tests', function(Y) {
             gridster = null;
         },
 
-        'should be positioned at the proper places': function() {
+        'should have three large blocks positioned': function() {
             var cells = gridster.get('cells'),
                 spaces = gridster.get('spaces'),
-                expectedSet;
+                expectedSet,
+                pos;
 
             spaces[15] = 11;
             spaces[14] = 11;
@@ -60,9 +61,9 @@ YUI.add('aui-gridster-tests', function(Y) {
                 undefined
             ];
 
-            cells.forEach(function(cell) {
-                var number = cell.getAttribute('data-cell'),
-                    expected = expectedSet[number],
+            function testCell (number) {
+                var expected = expectedSet[number],
+                    cell = cells[number],
                     computedStyle = window.getComputedStyle(cell);
 
                 if (!expected) {
@@ -75,7 +76,11 @@ YUI.add('aui-gridster-tests', function(Y) {
                 Assert.areSame(expected[1], cell.style.left, 'left for position ' + number);
                 Assert.areSame(expected[2], cell.style.height, 'height for position ' + number);
                 Assert.areSame(expected[3], cell.style.width, 'width for position ' + number);
-            });
+            }
+
+            for (pos = 0; pos < 16; pos += 1) {
+                testCell(pos);
+            }
         }
     }));
 
