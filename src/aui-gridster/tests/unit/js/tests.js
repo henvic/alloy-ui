@@ -22,6 +22,7 @@ YUI.add('aui-gridster-tests', function(Y) {
         'should update to grid with three large blocks positioned': function() {
             var cells = gridster.get('cells'),
                 spaces = gridster.get('spaces'),
+                levels = gridster.get('levels'),
                 expectedSet,
                 pos;
 
@@ -39,24 +40,24 @@ YUI.add('aui-gridster-tests', function(Y) {
 
             gridster.updatePositions();
 
-            // block cell: [top, left, height, width]
+            // block cell: [top, left, height, width, level]
             // hidden cell: undefined
 
             expectedSet = [
-                ['0%', '0%', '25%', '25%'],
-                ['0%', '25%', '25%', '25%'],
+                ['0%', '0%', '25%', '25%', 1],
+                ['0%', '25%', '25%', '25%', 1],
                 undefined,
                 undefined,
                 undefined,
-                ['25%', '0%', '50%', '50%'],
+                ['25%', '0%', '50%', '50%', 2],
                 undefined,
-                ['0%', '50%', '50%', '50%'],
+                ['0%', '50%', '50%', '50%', 2],
                 undefined,
                 undefined,
                 undefined,
-                ['50%', '50%', '50%', '50%'],
-                ['75%', '0%', '25%', '25%'],
-                ['75%', '25%', '25%', '25%'],
+                ['50%', '50%', '50%', '50%', 2],
+                ['75%', '0%', '25%', '25%', 1],
+                ['75%', '25%', '25%', '25%', 1],
                 undefined,
                 undefined
             ];
@@ -64,10 +65,12 @@ YUI.add('aui-gridster-tests', function(Y) {
             function testCell (number) {
                 var expected = expectedSet[number],
                     cell = cells[number],
+                    level = levels[number],
                     computedStyle = window.getComputedStyle(cell);
 
                 if (!expected) {
                     Assert.areSame('none', computedStyle.display, 'display for position ' + number);
+                    Assert.areSame(0, level);
                     return;
                 }
 
@@ -76,6 +79,7 @@ YUI.add('aui-gridster-tests', function(Y) {
                 Assert.areSame(expected[1], cell.style.left, 'left for position ' + number);
                 Assert.areSame(expected[2], cell.style.height, 'height for position ' + number);
                 Assert.areSame(expected[3], cell.style.width, 'width for position ' + number);
+                Assert.areSame(expected[4], level);
             }
 
             for (pos = 0; pos < 16; pos += 1) {

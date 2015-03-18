@@ -19,13 +19,16 @@
 A.Gridster = A.Base.create('gridster', A.Widget, [], {
     createMap: function() {
         var spaces = [],
+            levels = [],
             counter;
 
         for (counter = 0; counter < 16; counter += 1) {
             spaces[counter] = counter;
+            levels[counter] = 1;
         }
 
         this.set('spaces', spaces);
+        this.set('levels', levels);
     },
 
     initializer: function() {
@@ -47,6 +50,7 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
         var adjacents = [],
             spaces = this.get('spaces'),
             nodes = this.get('cells'),
+            levels = this.get('levels'),
             currentNode = nodes[cell],
             notDisplayedClassName = 'gridster-cell-hidden',
             level,
@@ -61,10 +65,13 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
 
         if (adjacents.length === 0) {
             currentNode.classList.add(notDisplayedClassName);
+            levels[cell] = 0;
             return;
         }
 
         level = Math.sqrt(adjacents.length);
+
+        levels[cell] = level;
 
         first = Math.min.apply(this, adjacents);
 
