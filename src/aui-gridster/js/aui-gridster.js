@@ -17,6 +17,14 @@
  */
 
 A.Gridster = A.Base.create('gridster', A.Widget, [], {
+    TPL_CONTROLLER_ARROWS: '<div class="gridster-controller-arrows">' +
+                '<button data-direction="SouthEast">SE</button>' +
+                '<button data-direction="SouthWest">SW</button>' +
+                '<button data-direction="NorthEast">NE</button>' +
+                '<button data-direction="NorthWest">NW</button></div>',
+
+    BUTTON_SIZE: 5,
+
     createMap: function() {
         var spaces = [],
             levels = [],
@@ -32,19 +40,31 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
     },
 
     initializer: function() {
-        var cells = A.all('#' + this.get('contentBox').get('id') + ' .gridster-cell');
+        var boundingBox = this.get('boundingBox'),
+            boundingBoxId = '#' + boundingBox.get('id'),
+            cells = A.all(boundingBoxId + ' .gridster-content .gridster-cell'),
+            controllerNode = this.get('boundingBox').appendChild(this.TPL_CONTROLLER_ARROWS),
+            arrows;
+
+        this.set('controllerNode', controllerNode);
+
+        arrows = A.all(boundingBoxId + ' .gridster-controller-arrows button');
 
         this.set('cells', cells);
 
         this.createMap();
 
         cells.on('mouseover', A.bind(this.mouveOverHandler, this));
+        this.set('arrows', arrows);
 
-        this._eventHandles = [cells];
+        boundingBox.on('mouseleave', A.bind(this.mouseLeaveGridsterHandler, this), this);
+
+        this._eventHandles = [cells, arrows];
     },
 
     destructor: function() {
         (new A.EventHandle(this._eventHandles)).detach();
+        this.get('boundingBox').removeChild(this.get('controllerNode'));
     },
 
     updatePosition: function(cell) {
