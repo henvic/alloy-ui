@@ -181,12 +181,12 @@
 <script>
     YUI({ filter:'raw' }).use('aui-gridster', function(Y) {
         var reset = Y.one('#reset'),
-            gridster;
+            gridster,
+            cells = Y.all('.gridster-cell');
 
         gridster = new Y.Gridster({
             boundingBox: '#gridster'
         }).render();
-
 
         reset.on('click', function() {
             var counter,
@@ -194,15 +194,15 @@
 
             for (counter = 0; counter < 16; counter += 1) {
                 if (Math.floor(Math.random() * 10) < 2) {
-                    Y.one('[data-cell=\'' + counter + '\']').setHTML('x');
+                    cells.item(counter).setHTML('x');
                 } else {
-                    Y.one('[data-cell=\'' + counter + '\']').setHTML('');
+                    cells.item(counter).setHTML('');
                 }
 
                 series.push(counter);
             }
 
-            gridster.update(series);
+            gridster.updatePositions(series);
         });
     });
 </script>
