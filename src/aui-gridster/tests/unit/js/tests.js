@@ -148,6 +148,10 @@ YUI.add('aui-gridster-tests', function(Y) {
             gridster.get('boundingBox').simulate('mouseout');
         },
 
+        'should have arrows as NodeList': function() {
+            Assert.isTrue(gridster.get('arrows') instanceof Y.NodeList);
+        },
+
         'should remove controller node on gridster destruction': function() {
             var controllerNode = gridster.get('controllerNode');
 
