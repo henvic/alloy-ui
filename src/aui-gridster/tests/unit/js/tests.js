@@ -152,6 +152,33 @@ YUI.add('aui-gridster-tests', function(Y) {
             Assert.isTrue(gridster.get('arrows') instanceof Y.NodeList);
         },
 
+        'should have arrows to all 4 directions': function() {
+            var directions,
+                arrows = gridster.get('arrows'),
+                amount = 0,
+                key;
+
+            directions = {
+                SouthEast: false,
+                SouthWest: false,
+                NorthEast: false,
+                NorthWest: false
+            };
+
+            arrows.each(function(arrow) {
+                directions[arrow.getData('direction')] = true;
+                amount += 1;
+            });
+
+            Assert.areSame(amount, 4, 'Amount of directions');
+
+            for (key in directions) {
+                if (directions.hasOwnProperty(key)) {
+                    Assert.isTrue(directions[key]);
+                }
+            }
+        },
+
         'should remove controller node on gridster destruction': function() {
             var controllerNode = gridster.get('controllerNode');
 
