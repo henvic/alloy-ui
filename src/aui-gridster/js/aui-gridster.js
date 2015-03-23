@@ -47,7 +47,6 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
         // move the arrow to the given cell
 
 
-        /* begin considering only single / 0 */
         if (direction.indexOf('North') !== -1 && Math.floor(cell / 4) === 0) {
             this._hideArrow(arrow);
             return;
@@ -130,7 +129,7 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
         });
     },
 
-    moveControllerToCell: function(cell) {
+    _syncControllerToCell: function(cell) {
         var arrows = this.get('arrows');
 
         arrows.each(function(arrow) {
@@ -156,7 +155,7 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
             children = parentNode.get('children'),
             index = children.indexOf(target);
 
-        this.moveControllerToCell(index);
+        this._syncControllerToCell(index);
     },
 
     mouseLeaveGridsterHandler: function() {
