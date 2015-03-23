@@ -9,8 +9,7 @@ YUI.add('aui-gridster-tests', function(Y) {
 
         setUp: function() {
             gridster = new Y.Gridster({
-                boundingBox: '#gridster',
-                contentBox: '#gridster .gridster-content'
+                boundingBox: '#gridster'
             }).render();
         },
 

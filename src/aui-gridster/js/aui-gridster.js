@@ -54,8 +54,9 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
 
         this.createMap();
 
-        cells.on('mouseover', A.bind(this.mouveOverHandler, this));
         this.set('arrows', arrows);
+
+        cells.on('mouseover', A.bind(this.mouseOverCellHandler, this));
 
         boundingBox.on('mouseleave', A.bind(this.mouseLeaveGridsterHandler, this), this);
 
