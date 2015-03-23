@@ -61,7 +61,7 @@ YUI.add('aui-gridster-tests', function(Y) {
                 undefined
             ];
 
-            function testCell (number) {
+            function testCell(number) {
                 var expected = expectedSet[number],
                     cell = cells.item(number),
                     level = levels[number],
