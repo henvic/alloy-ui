@@ -4,6 +4,8 @@
             "dd-drag",
             "dd-drop",
             "dd-proxy",
+            "datatype-number",
+            "event-mouseenter",
             "widget",
             "widget-autohide",
             "widget-position",

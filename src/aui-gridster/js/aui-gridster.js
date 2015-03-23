@@ -39,6 +39,94 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
         this.set('levels', levels);
     },
 
+    _moveArrowToCell: function(arrow, cell) {
+        var direction = arrow.getData('direction'),
+            method = '_move' + direction + 'ArrowToCell';
+
+        this[method](arrow, cell);
+    },
+
+    _moveNorthEastArrowToCell: function(arrow, cell) {
+        var currentNode = this.get('cells').item(cell);
+
+        arrow.setStyles({
+            'display': 'block',
+            'top': currentNode.getStyle('top'),
+            'left': (
+            A.Number.parse(currentNode.getStyle('left').slice(0, -1)) +
+            A.Number.parse(currentNode.getStyle('width').slice(0, -1)) -
+            this.BUTTON_SIZE) + '%'
+        });
+    },
+
+    _moveNorthWestArrowToCell: function(arrow, cell) {
+        var currentNode = this.get('cells').item(cell);
+
+        arrow.setStyles({
+            'display': 'block',
+            'top': currentNode.getStyle('top'),
+            'left': currentNode.getStyle('left')
+        });
+    },
+
+    _moveSouthEastArrowToCell: function(arrow, cell) {
+        var currentNode = this.get('cells').item(cell);
+
+        arrow.setStyles({
+            'display': 'block',
+            'top': (
+                A.Number.parse(currentNode.getStyle('top').slice(0, -1)) +
+                A.Number.parse(currentNode.getStyle('height').slice(0, -1)) -
+                this.BUTTON_SIZE) + '%',
+            'left': (
+                A.Number.parse(currentNode.getStyle('left').slice(0, -1)) +
+                A.Number.parse(currentNode.getStyle('width').slice(0, -1)) -
+                this.BUTTON_SIZE) + '%'
+        });
+    },
+
+    _moveSouthWestArrowToCell: function(arrow, cell) {
+        var currentNode = this.get('cells').item(cell);
+
+        arrow.setStyles({
+            'display': 'block',
+            'top': (
+                A.Number.parse(currentNode.getStyle('top').slice(0, -1)) +
+                A.Number.parse(currentNode.getStyle('height').slice(0, -1)) -
+                this.BUTTON_SIZE) + '%',
+            'left': currentNode.getStyle('left')
+        });
+    },
+
+    moveControllerToCell: function(cell) {
+        var arrows = this.get('arrows');
+
+        arrows.each(function(arrow) {
+            this._moveArrowToCell(arrow, cell);
+        }, this);
+
+        this.fire('controller-moved');
+    },
+
+    hideControllers: function() {
+        var arrows = this.get('arrows');
+
+        arrows.setStyle('display', 'none');
+    },
+
+    mouseOverCellHandler: function(event) {
+        var target = event.target,
+            parentNode = target.get('parentNode'),
+            children = parentNode.get('children'),
+            index = children.indexOf(target);
+
+        this.moveControllerToCell(index);
+    },
+
+    mouseLeaveGridsterHandler: function() {
+        this.hideControllers();
+    },
+
     initializer: function() {
         var boundingBox = this.get('boundingBox'),
             boundingBoxId = '#' + boundingBox.get('id'),

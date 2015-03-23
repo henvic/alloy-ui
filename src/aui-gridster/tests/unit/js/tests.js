@@ -127,11 +127,44 @@ YUI.add('aui-gridster-tests', function(Y) {
             for (pos = 0; pos < 16; pos += 1) {
                 testCell(pos);
             }
+        },
+
+        'should listen to mouse over cell event': function() {
+            var cell = gridster.get('cells').item(8),
+                moved;
+
+            gridster.on('controller-moved', function() {
+                moved = true;
+            });
+
+            cell.simulate('mouseover');
+
+            this.wait(function() {
+                Assert.isTrue(moved, 'Controller movement fired.');
+            }, 100);
+        },
+
+        'should listen to mouse leaving gridster': function() {
+            gridster.get('boundingBox').simulate('mouseout');
+        },
+
+        'should remove controller node on gridster destruction': function() {
+            var controllerNode = gridster.get('controllerNode');
+
+            gridster.destructor();
+
+            Assert.isNull(controllerNode.get('parentNode'));
+            Assert.isNull(Y.one('.gridster-controller-arrows'));
+
+            // avoid error message due to invoking destructor at teardown also
+            gridster = new Y.Gridster({
+                boundingBox: '#gridster'
+            }).render();
         }
     }));
 
     Y.Test.Runner.add(suite);
 
 }, '', {
-    requires: ['test', 'aui-gridster', 'node-screen']
+    requires: ['test', 'aui-gridster', 'node-screen', 'node-event-simulate']
 });
