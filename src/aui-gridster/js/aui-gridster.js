@@ -39,6 +39,38 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
         this.set('levels', levels);
     },
 
+
+    _syncArrowToCell: function(arrow, cell) {
+        var direction = arrow.getData('direction'),
+            level = this.get('levels')[cell];
+        // verify if there's any constrain that makes it impossible to
+        // move the arrow to the given cell
+
+
+        /* begin considering only single / 0 */
+        if (direction.indexOf('North') !== -1 && Math.floor(cell / 4) === 0) {
+            this._hideArrow(arrow);
+            return;
+        }
+
+        if (direction.indexOf('South') !== -1 && Math.floor(cell / 4) === 3) {
+            this._hideArrow(arrow);
+            return;
+        }
+
+        if (direction.indexOf('West') !== -1 && cell % 4 === 0) {
+            this._hideArrow(arrow);
+            return;
+        }
+
+        if (direction.indexOf('East') !== -1 && cell % 4 === 3) {
+            this._hideArrow(arrow);
+            return;
+        }
+
+        this._moveArrowToCell(arrow, cell);
+    },
+
     _moveArrowToCell: function(arrow, cell) {
         var direction = arrow.getData('direction'),
             method = '_move' + direction + 'ArrowToCell';
@@ -102,10 +134,14 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
         var arrows = this.get('arrows');
 
         arrows.each(function(arrow) {
-            this._moveArrowToCell(arrow, cell);
+            this._syncArrowToCell(arrow, cell);
         }, this);
 
         this.fire('controller-moved');
+    },
+
+    _hideArrow: function(arrow) {
+        arrow.setStyle('display', 'none');
     },
 
     hideControllers: function() {
