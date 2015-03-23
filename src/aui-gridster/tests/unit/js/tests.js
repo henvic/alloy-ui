@@ -179,6 +179,37 @@ YUI.add('aui-gridster-tests', function(Y) {
             }
         },
 
+        'should have arrows to the SE only for the 0th cell': function() {
+            var arrows = gridster.get('arrows'),
+                cell = gridster.get('cells').item(0),
+                expectedSet = {
+                    SouthEast: true,
+                    SouthWest: false,
+                    NorthEast: false,
+                    NorthWest: false
+                };
+
+            cell.simulate('mouseover');
+
+            function verify(arrow) {
+                var direction = arrow.getData('direction'),
+                    expected = expectedSet[direction],
+                    display = false;
+
+                if (arrow.getStyle('display') !== 'none') {
+                    display = true;
+                }
+
+                Assert.areSame(expected, display, direction + ' arrow should be displayed: ' + expected);
+            }
+
+            function waitCallback() {
+                arrows.each(verify, this);
+            }
+
+            this.wait(waitCallback, 100);
+        },
+
         'should remove controller node on gridster destruction': function() {
             var controllerNode = gridster.get('controllerNode');
 
