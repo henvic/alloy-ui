@@ -156,7 +156,7 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
         this.get('boundingBox').removeChild(this.get('controllerNode'));
     },
 
-    updatePosition: function(cell) {
+    _updatePosition: function(cell) {
         var adjacents = [],
             spaces = this.get('spaces'),
             levels = this.get('levels'),
@@ -196,7 +196,7 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
         var counter;
 
         for (counter = 0; counter < 16; counter += 1) {
-            this.updatePosition(counter);
+            this._updatePosition(counter);
         }
     },
 
