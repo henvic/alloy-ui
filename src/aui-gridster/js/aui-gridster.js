@@ -39,6 +39,20 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
         this.set('levels', levels);
     },
 
+    getGrouping: function(cell) {
+        var spaces = this.get('spaces'),
+            counter,
+            adjacents = [];
+
+        for (counter = 0; counter < 16; counter += 1) {
+            if (spaces[counter] === cell) {
+                adjacents.push(counter);
+            }
+        }
+
+        return adjacents;
+    },
+
 
     _syncArrowToCell: function(arrow, cell) {
         var direction = arrow.getData('direction'),
