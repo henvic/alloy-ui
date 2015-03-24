@@ -53,6 +53,20 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
         return adjacents;
     },
 
+    breakBrick: function(cell) {
+        var spaces = this.get('spaces'),
+            levels = this.get('levels'),
+            counter;
+
+        for (counter = 0; counter < 16; counter += 1) {
+            if (spaces[counter] === cell) {
+                spaces[counter] = counter;
+                levels[counter] = 1;
+            }
+        }
+
+        this.updatePositions();
+    },
 
     _syncArrowToCell: function(arrow, cell) {
         var direction = arrow.getData('direction'),
