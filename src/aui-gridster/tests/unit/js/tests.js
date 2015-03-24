@@ -133,7 +133,7 @@ YUI.add('aui-gridster-tests', function(Y) {
             var cell = gridster.get('cells').item(8),
                 moved;
 
-            gridster.on('controller-moved', function() {
+            gridster.on('controller-sync', function() {
                 moved = true;
             });
 

@@ -164,7 +164,7 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
             this._syncArrowToCell(arrow, cell);
         }, this);
 
-        this.fire('controller-moved');
+        this.fire('controller-sync');
     },
 
     _hideArrow: function(arrow) {
