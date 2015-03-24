@@ -139,9 +139,7 @@ YUI.add('aui-gridster-tests', function(Y) {
 
             cell.simulate('mouseover');
 
-            this.wait(function() {
-                Assert.isTrue(moved, 'Controller movement fired.');
-            }, 100);
+            Assert.isTrue(moved, 'Controller movement fired.');
         },
 
         'should listen to mouse leaving gridster': function() {
@@ -203,11 +201,7 @@ YUI.add('aui-gridster-tests', function(Y) {
                 Assert.areSame(expected, display, direction + ' arrow should be displayed: ' + expected);
             }
 
-            function waitCallback() {
-                arrows.each(verify, this);
-            }
-
-            this.wait(waitCallback, 100);
+            arrows.each(verify, this);
         },
 
         'should remove controller node on gridster destruction': function() {
