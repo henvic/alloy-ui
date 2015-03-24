@@ -270,6 +270,56 @@ YUI.add('aui-gridster-tests', function(Y) {
             }
         },
 
+        'should break bricks with area larger than one': function() {
+            var spaces = gridster.get('spaces'),
+                grouping,
+                groupings = [
+                    [0], [1], [2], [3], [],
+                    [4, 5, 8, 9],
+                    [6], [7], [], [], [],
+                    [10, 11, 14, 15],
+                    [12], [13], [], []
+                ],
+                counter;
+
+            spaces[15] = 11;
+            spaces[14] = 11;
+            spaces[10] = 11;
+
+            spaces[4] = 5;
+            spaces[8] = 5;
+            spaces[9] = 5;
+
+            spaces[2] = 7;
+            spaces[3] = 7;
+            spaces[6] = 7;
+
+
+            gridster.updatePositions();
+
+            grouping = gridster.getGrouping(7);
+
+            Assert.areSame(4, grouping.length);
+
+            gridster.breakBrick(7);
+
+            grouping = gridster.getGrouping(7);
+
+            Assert.areSame(1, grouping.length);
+            Assert.areSame(7, grouping[0]);
+
+            function areSameArray(expected, actual) {
+                Assert.areSame(expected.length, actual.length);
+                Assert.isTrue(actual.every(function(element, index) {
+                    return element === expected[index];
+                }));
+            }
+
+            for (counter = 0; counter < 16; counter += 1) {
+                areSameArray(groupings[counter], gridster.getGrouping(counter));
+            }
+        },
+
         'should remove controller node on gridster destruction': function() {
             var controllerNode = gridster.get('controllerNode');
 
