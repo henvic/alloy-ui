@@ -204,6 +204,35 @@ YUI.add('aui-gridster-tests', function(Y) {
             arrows.each(verify, this);
         },
 
+        'should have arrows limited by the edge boundaries': function() {
+            var arrows = gridster.get('arrows'),
+                cells = gridster.get('cells'),
+                cell,
+                expectedSet = {
+                    SouthEast: [0, 1, 2, 4, 5, 6, 8, 9, 10],
+                    SouthWest: [1, 2, 3, 5, 6, 7, 9, 10, 11],
+                    NorthEast: [4, 5, 6, 8, 9, 10, 12, 13, 14],
+                    NorthWest: [5, 6, 7, 9, 10, 11, 13, 14, 15]
+                };
+
+            function verify(arrow) {
+                var direction = arrow.getData('direction'),
+                    expected = expectedSet[direction].indexOf(cell) !== -1,
+                    display = false;
+
+                if (arrow.getStyle('display') !== 'none') {
+                    display = true;
+                }
+
+                Assert.areSame(expected, display, direction + ' arrow should be displayed: ' + expected);
+            }
+
+            for (cell = 0; cell < 16; cell += 1) {
+                cells.item(cell).simulate('mouseover');
+                arrows.each(verify, this);
+            }
+        },
+
         'should remove controller node on gridster destruction': function() {
             var controllerNode = gridster.get('controllerNode');
 
