@@ -199,7 +199,8 @@ YUI.add('aui-gridster-tests', function(Y) {
                     display = true;
                 }
 
-                Assert.areSame(expected, display, direction + ' arrow should be displayed: ' + expected + ' for cell ' + cell);
+                Assert.areSame(expected, display,
+                    direction + ' arrow should be displayed: ' + expected + ' for cell ' + cell);
             }
 
             arrows.each(verify, this);
@@ -226,7 +227,8 @@ YUI.add('aui-gridster-tests', function(Y) {
                     display = true;
                 }
 
-                Assert.areSame(expected, display, direction + ' arrow should be displayed: ' + expected + ' for cell ' + cell);
+                Assert.areSame(expected, display,
+                    direction + ' arrow should be displayed: ' + expected + ' for cell ' + cell);
             }
 
             for (cell = 0; cell < 16; cell += 1) {
