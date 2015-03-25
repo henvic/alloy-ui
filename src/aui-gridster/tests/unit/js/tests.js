@@ -206,6 +206,132 @@ YUI.add('aui-gridster-tests', function(Y) {
             arrows.each(verify, this);
         },
 
+        'should have arrows limited by the edge boundaries and breaks': function() {
+            var spaces = gridster.get('spaces'),
+                arrows = gridster.get('arrows'),
+                cells = gridster.get('cells'),
+                cell,
+                arrowsCellSet,
+                arrowsExpectedPos;
+
+            spaces[15] = 11;
+            spaces[14] = 11;
+            spaces[10] = 11;
+
+            spaces[4] = 5;
+            spaces[8] = 5;
+            spaces[9] = 5;
+
+            spaces[2] = 7;
+            spaces[3] = 7;
+            spaces[6] = 7;
+
+            gridster.updatePositions();
+
+            arrowsCellSet = {
+                SouthEast: [0, 1, 5],
+                SouthWest: [1, 7],
+                NorthEast: [5, 12, 13],
+                NorthWest: [11, 13],
+                Break: [5, 7, 11]
+            };
+
+
+            arrowsExpectedPos = {
+                SouthEast: {
+                    0: {
+                        top: '20%',
+                        left: '20%'
+                    },
+                    1: {
+                        top: '20%',
+                        left: '45%'
+                    },
+                    5: {
+                        top: '70%',
+                        left: '45%'
+                    }
+                },
+                SouthWest: {
+                    1: {
+                        top: '20%',
+                        left: '25%'
+                    },
+                    7: {
+                        top: '50%',
+                        left: '50%'
+                    }
+                },
+                NorthEast: {
+                    5: {
+                        top: '25%',
+                        left: '50%'
+                    },
+                    12: {
+                        top: '75%',
+                        left: '25%'
+                    },
+                    13: {
+                        top: '75%',
+                        left: '50%'
+                    }
+                },
+                NorthWest: {
+                    11: {
+                        top: '50%',
+                        left: '50%'
+                    },
+                    13: {
+                        top: '75%',
+                        left: '25%'
+                    }
+                },
+                Break: {
+                    5: {
+                        top: '47.5%',
+                        left: '22.5%'
+                    },
+                    7: {
+                        top: '22.5%',
+                        left: '72.5%'
+                    },
+                    11: {
+                        top: '72.5%',
+                        left: '72.5%'
+                    }
+                }
+            };
+
+            function verify(arrow) {
+                var direction = arrow.getData('direction'),
+                    expectDisplay = arrowsCellSet[direction].indexOf(cell) !== -1,
+                    position = arrowsExpectedPos[direction][cell],
+                    display = false;
+
+                if (arrow.getStyle('display') !== 'none') {
+                    display = true;
+                }
+
+                Assert.areSame(expectDisplay, display,
+                    direction + ' arrow displayed: ' + expectDisplay + ' for cell ' + cell);
+
+                if (!display) {
+                    return;
+                }
+
+                Assert.areSame(position.top, arrow.getStyle('top'),
+                    direction + ' point top position for cell ' + cell);
+
+                Assert.areSame(position.left, arrow.getStyle('left'),
+                    direction + ' point left position for cell ' + cell);
+            }
+
+            for (cell = 0; cell < 16; cell += 1) {
+                cells.item(cell).simulate('mouseover');
+                arrows.each(verify, this);
+            }
+        },
+
         'should have arrows limited by the edge boundaries': function() {
             var arrows = gridster.get('arrows'),
                 cells = gridster.get('cells'),
