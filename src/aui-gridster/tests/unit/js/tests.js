@@ -150,7 +150,7 @@ YUI.add('aui-gridster-tests', function(Y) {
             Assert.isTrue(gridster.get('arrows') instanceof Y.NodeList);
         },
 
-        'should have arrows to all 4 directions': function() {
+        'should have arrows for all 4 directions and 1 reset': function() {
             var directions,
                 arrows = gridster.get('arrows'),
                 amount = 0,
@@ -168,7 +168,7 @@ YUI.add('aui-gridster-tests', function(Y) {
                 amount += 1;
             });
 
-            Assert.areSame(amount, 4, 'Amount of directions');
+            Assert.areSame(amount, 5, 'Amount of buttons');
 
             for (key in directions) {
                 if (directions.hasOwnProperty(key)) {
@@ -184,7 +184,8 @@ YUI.add('aui-gridster-tests', function(Y) {
                     SouthEast: true,
                     SouthWest: false,
                     NorthEast: false,
-                    NorthWest: false
+                    NorthWest: false,
+                    Break: false
                 };
 
             cell.simulate('mouseover');
@@ -212,7 +213,8 @@ YUI.add('aui-gridster-tests', function(Y) {
                     SouthEast: [0, 1, 2, 4, 5, 6, 8, 9, 10],
                     SouthWest: [1, 2, 3, 5, 6, 7, 9, 10, 11],
                     NorthEast: [4, 5, 6, 8, 9, 10, 12, 13, 14],
-                    NorthWest: [5, 6, 7, 9, 10, 11, 13, 14, 15]
+                    NorthWest: [5, 6, 7, 9, 10, 11, 13, 14, 15],
+                    Break: []
                 };
 
             function verify(arrow) {

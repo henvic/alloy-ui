@@ -21,7 +21,8 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
                 '<button data-direction="SouthEast">SE</button>' +
                 '<button data-direction="SouthWest">SW</button>' +
                 '<button data-direction="NorthEast">NE</button>' +
-                '<button data-direction="NorthWest">NW</button></div>',
+                '<button data-direction="NorthWest">NW</button>' +
+                '<button data-direction="Break">BK</button></div>',
 
     BUTTON_SIZE: 5,
 
@@ -70,10 +71,15 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
 
     _syncArrowToCell: function(arrow, cell) {
         var direction = arrow.getData('direction'),
-            level = this.get('levels')[cell];
+            level = this.get('levels')[cell],
+            currentNode = this.get('cells').item(cell);
         // verify if there's any constrain that makes it impossible to
         // move the arrow to the given cell
 
+        if (currentNode.getStyle('display') === 'none') {
+            this.hideControllers();
+            return;
+        }
 
         if (direction.indexOf('North') !== -1 && Math.floor(cell / 4) === 0) {
             this._hideArrow(arrow);
@@ -91,6 +97,11 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
         }
 
         if (direction.indexOf('East') !== -1 && cell % 4 === 3) {
+            this._hideArrow(arrow);
+            return;
+        }
+
+        if (direction === 'Break' && level < 2) {
             this._hideArrow(arrow);
             return;
         }
@@ -154,6 +165,22 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
                 A.Number.parse(currentNode.getStyle('height').slice(0, -1)) -
                 this.BUTTON_SIZE) + '%',
             'left': currentNode.getStyle('left')
+        });
+    },
+
+    _moveBreakArrowToCell: function(arrow, cell) {
+        var currentNode = this.get('cells').item(cell);
+
+        arrow.setStyles({
+            'display': 'block',
+            'top': (
+                A.Number.parse(currentNode.getStyle('top').slice(0, -1)) +
+                (A.Number.parse(currentNode.getStyle('height').slice(0, -1)) * 0.55) -
+                this.BUTTON_SIZE) + '%',
+            'left': (
+                A.Number.parse(currentNode.getStyle('left').slice(0, -1)) +
+                (A.Number.parse(currentNode.getStyle('width').slice(0, -1)) * 0.55) -
+                this.BUTTON_SIZE) + '%'
         });
     },
 
