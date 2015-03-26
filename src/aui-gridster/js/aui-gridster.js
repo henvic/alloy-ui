@@ -313,6 +313,10 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
         for (counter = 0; counter < 16; counter += 1) {
             this._updatePosition(counter);
         }
+
+        this.fire('positions-change', {
+            spaces: this.get('spaces')
+        });
     },
 
     renderUI: function() {
