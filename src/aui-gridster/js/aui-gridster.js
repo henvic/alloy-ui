@@ -184,7 +184,7 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
         });
     },
 
-    _syncControllerToCell: function(cell) {
+    syncControllerToCell: function(cell) {
         var arrows = this.get('arrows');
 
         arrows.each(function(arrow) {
@@ -210,7 +210,7 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
             children = parentNode.get('children'),
             index = children.indexOf(target);
 
-        this._syncControllerToCell(index);
+        this.syncControllerToCell(index);
     },
 
     mouseLeaveGridsterHandler: function() {
