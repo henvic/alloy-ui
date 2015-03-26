@@ -221,6 +221,25 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
         this.hideControllers();
     },
 
+    _clickBreakArrowOnCell: function(cell) {
+        this.breakBrick(cell);
+    },
+
+    arrowClickHandler: function(event) {
+        var direction = event.target.getData('direction'),
+            method = '_click' + direction + 'ArrowOnCell',
+            controllerCell = this.get('controllerCell'),
+            gridster = this;
+
+        this[method](controllerCell);
+
+        setTimeout(function() {
+            gridster.syncControllerToCell(controllerCell);
+        }, 0);
+
+        this.fire('controller-action-' + direction);
+    },
+
     initializer: function() {
         var boundingBox = this.get('boundingBox'),
             boundingBoxId = '#' + boundingBox.get('id'),
@@ -239,6 +258,8 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
         this.set('arrows', arrows);
 
         cells.on('mouseover', A.bind(this.mouseOverCellHandler, this));
+
+        arrows.on('click', A.bind(this.arrowClickHandler, this));
 
         boundingBox.on('mouseleave', A.bind(this.mouseLeaveGridsterHandler, this), this);
 
