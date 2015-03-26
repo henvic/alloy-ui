@@ -418,8 +418,7 @@ YUI.add('aui-gridster-tests', function(Y) {
         },
 
         'should break bricks with area larger than one': function() {
-            var spaces = gridster.get('spaces'),
-                grouping,
+            var grouping,
                 groupings = [
                     [0], [1], [2], [3], [],
                     [4, 5, 8, 9],
@@ -429,20 +428,13 @@ YUI.add('aui-gridster-tests', function(Y) {
                 ],
                 counter;
 
-            spaces[15] = 11;
-            spaces[14] = 11;
-            spaces[10] = 11;
+            // remove default gridster with regular bricks
+            gridster.destructor();
 
-            spaces[4] = 5;
-            spaces[8] = 5;
-            spaces[9] = 5;
-
-            spaces[2] = 7;
-            spaces[3] = 7;
-            spaces[6] = 7;
-
-
-            gridster.updatePositions();
+            gridster = new Y.Gridster({
+                boundingBox: '#gridster',
+                spaces: [0, 1, 7, 7, 5, 5, 7, 7, 5, 5, 11, 11, 12, 13, 11, 11]
+            }).render();
 
             grouping = gridster.getGrouping(7);
 
