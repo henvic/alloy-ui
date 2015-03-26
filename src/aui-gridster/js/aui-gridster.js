@@ -192,10 +192,19 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
     },
 
     mouseOverCellHandler: function(event) {
-        var target = event.target,
-            parentNode = target.get('parentNode'),
-            children = parentNode.get('children'),
-            index = children.indexOf(target);
+        var target,
+            parentNode,
+            children,
+            index;
+
+        if (!this.get('showController')) {
+            return;
+        }
+
+        target = event.target;
+        parentNode = target.get('parentNode');
+        children = parentNode.get('children');
+        index = children.indexOf(target);
 
         this.syncControllerToCell(index);
     },
@@ -334,6 +343,18 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
                 }
 
                 return spaces;
+            }
+        },
+
+        showController: {
+            value: false,
+            validator: A.Lang.isBoolean,
+            setter: function(value) {
+                if (!value) {
+                    this.hideControllers();
+                }
+
+                return value;
             }
         }
     }

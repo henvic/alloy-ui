@@ -136,9 +136,11 @@ YUI.add('aui-gridster-tests', function(Y) {
             }
         },
 
-        'should listen to mouse over cell event': function() {
+        'should listen to mouse over cell event and trigger controller': function() {
             var cell = gridster.get('cells').item(8),
                 moved;
+
+            gridster.set('showController', true);
 
             gridster.once('controller-sync', function() {
                 moved = true;
@@ -194,6 +196,8 @@ YUI.add('aui-gridster-tests', function(Y) {
                     NorthWest: false,
                     Break: false
                 };
+
+            gridster.set('showController', true);
 
             cell.simulate('mouseover');
 
@@ -339,7 +343,7 @@ YUI.add('aui-gridster-tests', function(Y) {
             }
         },
 
-        'should have arrows limited by the edge boundaries': function() {
+        'should have arrows limited by the edge boundaries when controller is on': function() {
             var arrows = gridster.get('arrows'),
                 cells = gridster.get('cells'),
                 cell,
@@ -363,6 +367,8 @@ YUI.add('aui-gridster-tests', function(Y) {
                 Assert.areSame(expected, display,
                     direction + ' arrow should be displayed: ' + expected + ' for cell ' + cell);
             }
+
+            gridster.set('showController', true);
 
             for (cell = 0; cell < 16; cell += 1) {
                 cells.item(cell).simulate('mouseover');
@@ -474,6 +480,8 @@ YUI.add('aui-gridster-tests', function(Y) {
                 listened,
                 expectedSet,
                 pos;
+
+            gridster.set('showController', true);
 
             spaces[15] = 11;
             spaces[14] = 11;
