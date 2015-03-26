@@ -37,6 +37,13 @@ YUI.add('aui-gridster-tests', function(Y) {
             spaces[3] = 7;
             spaces[6] = 7;
 
+            gridster.on('positions-change', function(event) {
+                var expectedSpaces = [0, 1, 7, 7, 5, 5, 7, 7, 5, 5, 11, 11, 12, 13, 11, 11];
+
+                Y.ArrayAssert.itemsAreSame(expectedSpaces, event.details[0].spaces,
+                    'Positions change event should expose current spaces.');
+            });
+
             gridster.updatePositions();
 
             // block cell: [top, left, height, width, level]
