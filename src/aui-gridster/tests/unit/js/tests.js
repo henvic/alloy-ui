@@ -459,6 +459,97 @@ YUI.add('aui-gridster-tests', function(Y) {
             }
         },
 
+        'should break bricks on clicking on the break button': function() {
+            var spaces = gridster.get('spaces'),
+                levels = gridster.get('levels'),
+                cells = gridster.get('cells'),
+                brickCell = cells.item(11),
+                listened,
+                expectedSet,
+                pos;
+
+            spaces[15] = 11;
+            spaces[14] = 11;
+            spaces[10] = 11;
+
+            spaces[4] = 5;
+            spaces[8] = 5;
+            spaces[9] = 5;
+
+            spaces[2] = 7;
+            spaces[3] = 7;
+            spaces[6] = 7;
+
+            gridster.updatePositions();
+
+            // block cell: [top, left, height, width, level]
+            // hidden cell: undefined
+
+            expectedSet = [
+                ['0%', '0%', '25%', '25%', 1],
+                ['0%', '25%', '25%', '25%', 1],
+                undefined,
+                undefined,
+                undefined,
+                ['25%', '0%', '50%', '50%', 2],
+                undefined,
+                ['0%', '50%', '50%', '50%', 2],
+                undefined,
+                undefined,
+                ['50%', '50%', '25%', '25%', 1],
+                ['50%', '75%', '25%', '25%', 1],
+                ['75%', '0%', '25%', '25%', 1],
+                ['75%', '25%', '25%', '25%', 1],
+                ['75%', '50%', '25%', '25%', 1],
+                ['75%', '75%', '25%', '25%', 1]
+            ];
+
+            function testCell(number) {
+                var expected = expectedSet[number],
+                    cell = cells.item(number),
+                    level = levels[number],
+                    computedStyle = window.getComputedStyle(cell.getDOMNode());
+
+                if (!expected) {
+                    Assert.areSame('none', computedStyle.display, 'display for position ' + number);
+                    Assert.areSame(0, level);
+                    return;
+                }
+
+                Assert.areSame('block', computedStyle.display, 'display for position ' + number);
+                Assert.areSame(expected[0], cell.getStyle('top'), 'top for position ' + number);
+                Assert.areSame(expected[1], cell.getStyle('left'), 'left for position ' + number);
+                Assert.areSame(expected[2], cell.getStyle('height'), 'height for position ' + number);
+                Assert.areSame(expected[3], cell.getStyle('width'), 'width for position ' + number);
+                Assert.areSame(expected[4], level);
+            }
+
+            function breakActionListener() {
+                var expectedSpaces = [0, 1, 7, 7, 5, 5, 7, 7, 5, 5, 10, 11, 12, 13, 14, 15],
+                    expectedLevels = [1, 1, 0, 0, 0, 2, 0, 2, 0, 0, 1, 1, 1, 1, 1, 1];
+
+                Assert.isTrue(listened, 'Grid block breaks');
+                Y.ArrayAssert.itemsAreSame(expectedSpaces, spaces);
+                Y.ArrayAssert.itemsAreSame(expectedLevels, levels);
+
+                for (pos = 0; pos < 16; pos += 1) {
+                    testCell(pos);
+                }
+            }
+
+            gridster.once('controller-action-Break', function() {
+                listened = true;
+            });
+
+            gridster.once('controller-sync', function() {
+                Y.one('.gridster-controller-arrows [data-direction="Break"]').simulate('click');
+            }, this);
+
+            brickCell.simulate('mouseover');
+
+            this.wait(breakActionListener, 0);
+        },
+
         'should remove controller node on gridster destruction': function() {
             var controllerNode = gridster.get('controllerNode');
 
