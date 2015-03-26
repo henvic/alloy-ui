@@ -230,6 +230,35 @@ YUI.add('aui-gridster-tests', function(Y) {
             arrows.each(verify, this);
         },
 
+        'should be able to hide shown controllers': function() {
+            var arrows = gridster.get('arrows'),
+                cells = gridster.get('cells'),
+                spaces = gridster.get('spaces'),
+                cell = 5,
+                counter;
+
+            gridster.set('showController', true);
+
+            spaces[6] = 5;
+            spaces[9] = 5;
+            spaces[10] = 5;
+
+            gridster.updatePositions();
+
+
+            cells.item(cell).simulate('mouseover');
+
+            for (counter = 0; counter < 5; counter += 1) {
+                Assert.areSame('block', arrows.item(counter).getStyle('display'));
+            }
+
+            gridster.set('showController', false);
+
+            for (counter = 0; counter < 5; counter += 1) {
+                Assert.areSame('none', arrows.item(counter).getStyle('display'));
+            }
+        },
+
         'should have arrows limited by the edge boundaries and breaks': function() {
             var spaces = gridster.get('spaces'),
                 arrows = gridster.get('arrows'),
