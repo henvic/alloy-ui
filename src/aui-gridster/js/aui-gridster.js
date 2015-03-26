@@ -26,17 +26,19 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
 
     BUTTON_SIZE: 5,
 
-    createMap: function() {
-        var spaces = [],
+    _createLevels: function() {
+        var spaces = this.get('spaces'),
             levels = [],
             counter;
 
         for (counter = 0; counter < 16; counter += 1) {
-            spaces[counter] = counter;
-            levels[counter] = 1;
+            levels[counter] = 0;
         }
 
-        this.set('spaces', spaces);
+        for (counter = 0; counter < 16; counter += 1) {
+            levels[spaces[counter]] += 1;
+        }
+
         this.set('levels', levels);
     },
 
@@ -232,7 +234,7 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
 
         this.set('cells', cells);
 
-        this.createMap();
+        this._createLevels();
 
         this.set('arrows', arrows);
 
@@ -314,5 +316,17 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
      * @static
      */
     ATTRS: {
+        spaces: {
+            valueFn: function() {
+                var spaces = [],
+                    counter;
+
+                for (counter = 0; counter < 16; counter += 1) {
+                    spaces[counter] = counter;
+                }
+
+                return spaces;
+            }
+        }
     }
 });
