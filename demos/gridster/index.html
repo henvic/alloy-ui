@@ -156,6 +156,7 @@
 <div class="container">
     <div class="row">
     <button id="reset">reset &amp; randomize</button>
+    <label for="controller">Show controller</label> <input type="checkbox" name="controller" id="controller">
         <div class="gridster" id="gridster">
             <div class="gridster-content">
                 <div class="gridster-cell"></div>
@@ -182,11 +183,16 @@
     YUI({ filter:'raw' }).use('aui-gridster', function(Y) {
         var reset = Y.one('#reset'),
             gridster,
-            cells = Y.all('.gridster-cell');
+            cells = Y.all('.gridster-cell'),
+            controller = Y.one('#controller');
 
         gridster = new Y.Gridster({
             boundingBox: '#gridster'
         }).render();
+
+        controller.on('change', function(event) {
+            gridster.set('showController', event.target.get('checked'));
+        });
 
         reset.on('click', function() {
             var counter,
