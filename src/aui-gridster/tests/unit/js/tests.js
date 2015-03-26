@@ -138,17 +138,17 @@ YUI.add('aui-gridster-tests', function(Y) {
 
         'should listen to mouse over cell event and trigger controller': function() {
             var cell = gridster.get('cells').item(8),
-                moved;
+                fired;
 
             gridster.set('showController', true);
 
             gridster.once('controller-sync', function() {
-                moved = true;
+                fired = true;
             });
 
             cell.simulate('mouseover');
 
-            Assert.isTrue(moved, 'Controller movement fired.');
+            Assert.isTrue(fired, 'Controller movement fired');
         },
 
         'should listen to mouse leaving gridster': function() {
