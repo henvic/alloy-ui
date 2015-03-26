@@ -78,35 +78,18 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
         // verify if there's any constrain that makes it impossible to
         // move the arrow to the given cell
 
-        if (currentNode.getStyle('display') === 'none') {
+        if ((currentNode.getStyle('display') === 'none') ||
+            (direction.indexOf('North') !== -1 && Math.floor(cell / 4) === 0) ||
+            (direction.indexOf('South') !== -1 && Math.floor(cell / 4) === 3) ||
+            (direction.indexOf('West') !== -1 && cell % 4 === 0) ||
+            (direction.indexOf('East') !== -1 && cell % 4 === 3) ||
+            (direction === 'Break' && level < 2)) {
             this._hideArrow(arrow);
             return;
         }
 
-        if (direction.indexOf('North') !== -1 && Math.floor(cell / 4) === 0) {
-            this._hideArrow(arrow);
-            return;
-        }
 
-        if (direction.indexOf('South') !== -1 && Math.floor(cell / 4) === 3) {
-            this._hideArrow(arrow);
-            return;
-        }
 
-        if (direction.indexOf('West') !== -1 && cell % 4 === 0) {
-            this._hideArrow(arrow);
-            return;
-        }
-
-        if (direction.indexOf('East') !== -1 && cell % 4 === 3) {
-            this._hideArrow(arrow);
-            return;
-        }
-
-        if (direction === 'Break' && level < 2) {
-            this._hideArrow(arrow);
-            return;
-        }
 
         this._moveArrowToCell(arrow, cell);
     },
