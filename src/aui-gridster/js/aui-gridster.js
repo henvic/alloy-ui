@@ -187,6 +187,8 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
     syncControllerToCell: function(cell) {
         var arrows = this.get('arrows');
 
+        this.set('controllerCell', cell);
+
         arrows.each(function(arrow) {
             this._syncArrowToCell(arrow, cell);
         }, this);
