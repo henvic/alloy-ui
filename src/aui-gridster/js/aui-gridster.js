@@ -77,7 +77,7 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
         // move the arrow to the given cell
 
         if (currentNode.getStyle('display') === 'none') {
-            this.hideControllers();
+            this._hideArrow(arrow);
             return;
         }
 
