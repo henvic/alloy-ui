@@ -363,6 +363,23 @@ YUI.add('aui-gridster-tests', function(Y) {
             }
         },
 
+        'should hide arrows if active cell is in hidden state': function() {
+            var spaces = gridster.get('spaces'),
+                arrows = gridster.get('arrows');
+
+                spaces[6] = 5;
+                spaces[9] = 5;
+                spaces[10] = 5;
+
+                gridster.updatePositions();
+
+                gridster.syncControllerToCell(6);
+
+                Assert.isTrue(Y.Array.every(arrows.getStyle('display'), function(actual) {
+                    return actual === 'none';
+                }), 'Arrows should not be displayed on top of not visible cell');
+        },
+
         'should get groupings': function() {
             var spaces = gridster.get('spaces'),
                 groupings = [
