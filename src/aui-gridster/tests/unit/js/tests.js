@@ -136,6 +136,19 @@ YUI.add('aui-gridster-tests', function(Y) {
             }
         },
 
+        'should not listen to controller-sync event when controller is off': function() {
+            var cell = gridster.get('cells').item(8),
+                fired = false;
+
+            gridster.once('controller-sync', function() {
+                fired = true;
+            });
+
+            cell.simulate('mouseover');
+
+            Assert.isFalse(fired, 'Controller movement should not fire');
+        },
+
         'should listen to mouse over cell event and trigger controller': function() {
             var cell = gridster.get('cells').item(8),
                 fired;
