@@ -14,6 +14,10 @@ YUI.add('aui-gridster-tests', function(Y) {
         },
 
         tearDown: function() {
+            gridster.get('cells').each(function(node) {
+                node.setHTML('');
+            });
+
             gridster.destructor();
             gridster = null;
         },
