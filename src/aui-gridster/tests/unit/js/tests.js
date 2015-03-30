@@ -33,6 +33,25 @@ YUI.add('aui-gridster-tests', function(Y) {
             });
         },
 
+        'verify cell availability': function() {
+            var cells = gridster.get('cells'),
+                notFree = [2, 3, 6, 7, 10, 11, 14, 15];
+
+            gridster.set('spaces', [0, 1, 7, 7, 5, 5, 7, 7, 5, 5, 11, 11, 12, 13, 11, 11]);
+
+            gridster.updatePositions();
+
+            cells.item(11).setHTML('x');
+            cells.item(7).setHTML('x');
+
+            cells.each(function(node, counter) {
+                var free = notFree.indexOf(counter) === -1,
+                    available = gridster.isCellAvailable(counter);
+
+                Assert.areSame(free, available, 'Cell ' + counter + ' availability: ' + free);
+            });
+        },
+
         'should update to grid with three large blocks positioned': function() {
             var cells = gridster.get('cells'),
                 spaces = gridster.get('spaces'),
