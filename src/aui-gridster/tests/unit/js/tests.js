@@ -22,6 +22,17 @@ YUI.add('aui-gridster-tests', function(Y) {
             gridster = null;
         },
 
+        'verify setting content on cells and verify emptiness': function() {
+            var cells = gridster.get('cells');
+
+            cells.each(function(node, counter) {
+                node.setHTML('x');
+                Assert.isFalse(gridster.isCellEmpty(counter), 'cell ' + counter + ' shouldn\'t be empty');
+                node.setHTML('');
+                Assert.isTrue(gridster.isCellEmpty(counter), 'cell ' + counter + ' should be empty');
+            });
+        },
+
         'should update to grid with three large blocks positioned': function() {
             var cells = gridster.get('cells'),
                 spaces = gridster.get('spaces'),
