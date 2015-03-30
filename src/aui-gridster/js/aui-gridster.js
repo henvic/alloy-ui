@@ -71,6 +71,12 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
         this.updatePositions();
     },
 
+    isCellEmpty: function(cell) {
+        var currentNode = this.get('cells').item(cell);
+
+        return currentNode.getHTML() === '';
+    },
+
     _syncArrowToCell: function(arrow, cell) {
         var direction = arrow.getData('direction'),
             level = this.get('levels')[cell],
