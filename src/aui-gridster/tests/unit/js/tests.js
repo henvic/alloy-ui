@@ -294,24 +294,15 @@ YUI.add('aui-gridster-tests', function(Y) {
         },
 
         'should have arrows limited by the edge boundaries and breaks': function() {
-            var spaces = gridster.get('spaces'),
-                arrows = gridster.get('arrows'),
+            var arrows = gridster.get('arrows'),
                 cells = gridster.get('cells'),
                 cell,
                 arrowsCellSet,
                 arrowsExpectedPos;
 
-            spaces[15] = 11;
-            spaces[14] = 11;
-            spaces[10] = 11;
+            gridster.set('showController', true);
 
-            spaces[4] = 5;
-            spaces[8] = 5;
-            spaces[9] = 5;
-
-            spaces[2] = 7;
-            spaces[3] = 7;
-            spaces[6] = 7;
+            gridster.set('spaces', [0, 1, 7, 7, 5, 5, 7, 7, 5, 5, 11, 11, 12, 13, 11, 11]);
 
             gridster.updatePositions();
 
@@ -323,68 +314,67 @@ YUI.add('aui-gridster-tests', function(Y) {
                 Break: [5, 7, 11]
             };
 
-
             arrowsExpectedPos = {
                 SouthEast: {
                     0: {
-                        top: '20%',
-                        left: '20%'
+                        top: 20,
+                        left: 20
                     },
                     1: {
-                        top: '20%',
-                        left: '45%'
+                        top: 20,
+                        left: 45
                     },
                     5: {
-                        top: '70%',
-                        left: '45%'
+                        top: 70,
+                        left: 45
                     }
                 },
                 SouthWest: {
                     1: {
-                        top: '20%',
-                        left: '25%'
+                        top: 20,
+                        left: 25
                     },
                     7: {
-                        top: '50%',
-                        left: '50%'
+                        top: 45,
+                        left: 50
                     }
                 },
                 NorthEast: {
                     5: {
-                        top: '25%',
-                        left: '50%'
+                        top: 25,
+                        left: 45
                     },
                     12: {
-                        top: '75%',
-                        left: '25%'
+                        top: 75,
+                        left: 20
                     },
                     13: {
-                        top: '75%',
-                        left: '50%'
+                        top: 75,
+                        left: 45
                     }
                 },
                 NorthWest: {
                     11: {
-                        top: '50%',
-                        left: '50%'
+                        top: 50,
+                        left: 50
                     },
                     13: {
-                        top: '75%',
-                        left: '25%'
+                        top: 75,
+                        left: 25
                     }
                 },
                 Break: {
                     5: {
-                        top: '47.5%',
-                        left: '22.5%'
+                        top: 47,
+                        left: 22
                     },
                     7: {
-                        top: '22.5%',
-                        left: '72.5%'
+                        top: 22,
+                        left: 72
                     },
                     11: {
-                        top: '72.5%',
-                        left: '72.5%'
+                        top: 72,
+                        left: 72
                     }
                 }
             };
@@ -393,7 +383,9 @@ YUI.add('aui-gridster-tests', function(Y) {
                 var direction = arrow.getData('direction'),
                     expectDisplay = arrowsCellSet[direction].indexOf(cell) !== -1,
                     position = arrowsExpectedPos[direction][cell],
-                    display = false;
+                    display = false,
+                    actualTop,
+                    actualLeft;
 
                 if (arrow.getStyle('display') !== 'none') {
                     display = true;
@@ -406,10 +398,16 @@ YUI.add('aui-gridster-tests', function(Y) {
                     return;
                 }
 
-                Assert.areSame(position.top, arrow.getStyle('top'),
+                actualTop = arrow.getStyle('top');
+                actualLeft = arrow.getStyle('left');
+
+                actualTop = Math.floor(actualTop.substring(0, actualTop.length - 1));
+                actualLeft = Math.floor(actualLeft.substring(0, actualLeft.length - 1));
+
+                Assert.areSame(position.top, actualTop,
                     direction + ' point top position for cell ' + cell);
 
-                Assert.areSame(position.left, arrow.getStyle('left'),
+                Assert.areSame(position.left, actualLeft,
                     direction + ' point left position for cell ' + cell);
             }
 
