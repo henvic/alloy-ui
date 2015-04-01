@@ -293,6 +293,85 @@ YUI.add('aui-gridster-tests', function(Y) {
             }
         },
 
+        'should add arrows only when adjacent cells are available': function() {
+            var cells = gridster.get('cells'),
+                spaces = gridster.get('spaces'),
+                arrows = gridster.get('arrows');
+
+            gridster.set('showController', true);
+
+            function verifyArrow(type, direction, cell) {
+                var arrow,
+                    counter;
+
+                // Better to get the wanted arrow directly instead of looping
+                for (counter = 0; counter < 5; counter += 1) {
+                    arrow = arrows.item(counter);
+
+                    if (arrow.getData('direction') !== direction) {
+                        continue;
+                    }
+
+                    Assert.areSame(type, arrow.getStyle('display'),
+                        'Display for ' + arrow.getData('direction') +
+                        ' arrow should be ' + type + ' on cell ' + cell);
+                }
+            }
+
+            function testArrowBlockingByCell(direction, blockingCell, cell) {
+                cells.item(blockingCell).setHTML('x');
+                cells.item(cell).simulate('mouseover');
+                verifyArrow('none', direction, cell);
+                cells.item(blockingCell).setHTML('');
+            }
+
+            function resetSpaces() {
+                var counter;
+
+                for (counter = 0; counter < 16; counter += 1) {
+                    spaces[counter] = counter;
+                }
+            }
+
+            function testBlockPositions(block, direction, blockingCells) {
+                block.forEach(function() {
+                    var places = arguments[2],
+                        cell = arguments[0];
+
+                    resetSpaces();
+
+                    places.forEach(function(place) {
+                        spaces[place] = cell;
+                    });
+
+                    gridster.updatePositions();
+
+                    cells.item(cell).simulate('mouseover');
+                    verifyArrow('block', direction, cell);
+
+                    blockingCells.forEach(function(blockingCell) {
+                        testArrowBlockingByCell(direction, blockingCell, cell);
+                    });
+                });
+            }
+
+            testBlockPositions([3], 'SouthWest', [2, 6, 7]);
+            testBlockPositions([2, 3, 6, 7], 'SouthWest', [1, 5, 9, 10, 11]);
+            testBlockPositions([1, 2, 3, 5, 6, 7, 9, 10, 11], 'SouthWest', [0, 4, 8, 12, 13, 14, 15]);
+
+            testBlockPositions([9], 'NorthEast', [5, 6, 10]);
+            testBlockPositions([8, 9, 12, 13], 'NorthEast', [4, 5, 6, 10, 14]);
+            testBlockPositions([4, 5, 6, 8, 9, 10, 12, 13, 14], 'NorthEast', [0, 1, 2, 3, 7, 11, 15]);
+
+            testBlockPositions([10], 'NorthWest', [5, 6, 9]);
+            testBlockPositions([10, 11, 14, 15], 'NorthWest', [5, 6, 7, 9, 13]);
+            testBlockPositions([5, 6, 7, 9, 10, 11, 13, 14, 15], 'NorthWest', [0, 1, 2, 3, 4, 8, 12]);
+
+            testBlockPositions([5], 'SouthEast', [6, 9, 10]);
+            testBlockPositions([5, 6, 9, 10], 'SouthEast', [7, 11, 13, 14, 15]);
+            testBlockPositions([0, 1, 2, 4, 5, 6, 8, 9, 10], 'SouthEast', [3, 7, 11, 12, 13, 14, 15]);
+        },
+
         'should have arrows limited by the edge boundaries and breaks': function() {
             var arrows = gridster.get('arrows'),
                 cells = gridster.get('cells'),
