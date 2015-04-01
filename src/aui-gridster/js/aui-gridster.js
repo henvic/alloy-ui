@@ -57,9 +57,16 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
     },
 
     breakBrick: function(cell) {
+        this._prepareBreakBrick(cell);
+        this.updatePositions();
+    },
+
+    _prepareBreakBrick: function(cell) {
         var spaces = this.get('spaces'),
             levels = this.get('levels'),
             counter;
+
+        cell = spaces[cell];
 
         for (counter = 0; counter < 16; counter += 1) {
             if (spaces[counter] === cell) {
@@ -67,6 +74,7 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
                 levels[counter] = 1;
             }
         }
+    },
 
         this.updatePositions();
     },
