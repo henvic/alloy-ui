@@ -312,7 +312,9 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
     },
 
     updatePositions: function() {
-        var counter;
+        var gridster = this,
+            counter,
+            controllerCell = this.get('controllerCell');
 
         for (counter = 0; counter < 16; counter += 1) {
             this._updatePosition(counter);
@@ -321,6 +323,12 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
         this.fire('positions-change', {
             spaces: this.get('spaces')
         });
+
+        setTimeout(function() {
+            if (controllerCell) {
+                gridster.syncControllerToCell(controllerCell);
+            }
+        }, 0);
     },
 
     renderUI: function() {
