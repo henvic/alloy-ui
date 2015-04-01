@@ -83,25 +83,121 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
         return this.isCellEmpty(spaces[cell]);
     },
 
+    _isAdjacentCellAvailableLeft: function(cell, diagonalShown, counter) {
+        var a = cell + counter,
+            b = diagonalShown - counter;
+
+        return !((a <= 15 && !this.isCellAvailable(a)) ||
+            (cell >= 0 && !this.isCellAvailable(b)));
+    },
+
+    _isAdjacentCellAvailableRight: function(cell, diagonalShown, counter) {
+        var a = cell - counter,
+            b = diagonalShown + counter;
+
+        return !((a >= 0 && !this.isCellAvailable(a)) ||
+            (b <= 15 && !this.isCellAvailable(b)));
+    },
+
+    _isAdjacentCellAvailableTop: function(cell, diagonalShown, counter) {
+        var a = cell + (4 * counter),
+            b = diagonalShown - (4 * counter);
+
+        return !((a <= 15 && !this.isCellAvailable(a)) ||
+            (b >= 0 && !this.isCellAvailable(b)));
+    },
+
+    _isAdjacentCellAvailableBottom: function(cell, diagonalShown, counter) {
+        var a = cell - (4 * counter),
+            b = diagonalShown + (4 * counter);
+
+        return !((a >= 0 && !this.isCellAvailable(a)) ||
+            (b <= 15 && !this.isCellAvailable(b)));
+    },
+
+    _areAdjacentCellsAvailable: function(cell, diagonal, level, dirX, dirY) {
+        var spaces = this.get('spaces'),
+            methodX = '_isAdjacentCellAvailable' + dirX,
+            methodY = '_isAdjacentCellAvailable' + dirY,
+            counter;
+
+        if (!this.isCellAvailable(spaces[diagonal])) {
+            return false;
+        }
+
+        for (counter = 1; counter <= level; counter += 1) {
+            if (!this[methodX](cell, spaces[diagonal], counter) ||
+                !this[methodY](cell, spaces[diagonal], counter)) {
+                return false;
+            }
+        }
+
+        return true;
+    },
+
+    _verifyNorthBoundaryCell: function(cell) {
+        return Math.floor(cell / 4) === 0;
+    },
+
+    _verifySouthBoundaryCell: function(cell) {
+        return Math.floor(cell / 4) === 3;
+    },
+
+    _verifyWestBoundaryCell: function(cell) {
+        return (cell % 4 === 0);
+    },
+
+    _verifyEastBoundaryCell: function(cell) {
+        return cell % 4 === 3;
+    },
+
+    _verifyBoundary: function(direction, vector, cells) {
+        if (direction.indexOf(vector) === -1) {
+            return false;
+        }
+
+        return cells.some(this['_verify' + vector + 'BoundaryCell']);
+    },
+
+    _verifyBoundaries: function(direction, grouping) {
+        return ['North', 'South', 'West', 'East'].some(function(vector) {
+            return this._verifyBoundary(direction, vector, grouping);
+        }, this);
+    },
+
+    _verifyDirection: function(cell, diagonal, level, dirX, dirY) {
+        return (diagonal < 0 || diagonal > 15 ||
+            !this._areAdjacentCellsAvailable(cell, diagonal, level, dirX, dirY));
+    },
+
     _syncArrowToCell: function(arrow, cell) {
         var direction = arrow.getData('direction'),
             level = this.get('levels')[cell],
-            currentNode = this.get('cells').item(cell);
-        // verify if there's any constrain that makes it impossible to
-        // move the arrow to the given cell
+            currentNode = this.get('cells').item(cell),
+            grouping = this.getGrouping(cell),
+            directions,
+            opt;
+
+        directions = {
+            SouthEast: [grouping[grouping.length - 1] + 5, 'Left', 'Top'],
+            SouthWest: [grouping[[0, 2, 6][level - 1]] + 3, 'Right', 'Top'],
+            NorthEast: [grouping[level - 1] - 3, 'Left', 'Bottom'],
+            NorthWest: [grouping[0] - 5, 'Right', 'Bottom']
+        };
 
         if ((currentNode.getStyle('display') === 'none') ||
-            (direction.indexOf('North') !== -1 && Math.floor(cell / 4) === 0) ||
-            (direction.indexOf('South') !== -1 && Math.floor(cell / 4) === 3) ||
-            (direction.indexOf('West') !== -1 && cell % 4 === 0) ||
-            (direction.indexOf('East') !== -1 && cell % 4 === 3) ||
+            this._verifyBoundaries(direction, grouping) ||
             (direction === 'Break' && level < 2)) {
             this._hideArrow(arrow);
             return;
         }
 
+        opt = directions[direction];
 
-
+        if (direction !== 'Break' && this._verifyDirection(cell, opt[0], level, opt[1], opt[2])) {
+            this._hideArrow(arrow);
+            return;
+        }
 
         this._moveArrowToCell(arrow, cell);
     },
