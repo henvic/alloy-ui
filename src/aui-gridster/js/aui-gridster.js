@@ -76,7 +76,106 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
         }
     },
 
+    _expandNorthEast: function(cell) {
+        var levels = this.get('levels'),
+            level = levels[cell],
+            grouping = this.getGrouping(cell),
+            ne = grouping[level - 1],
+            receivers;
+
+        switch(level) {
+            case 1:
+                receivers = [ne + 1, ne - 3, ne - 4];
+                break;
+            case 2:
+                receivers = [ne - 5, ne - 4, ne - 3, ne + 1, ne + 5];
+                break;
+            default:
+                receivers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
+        }
+
+        this._reserveSpace(cell, receivers);
         this.updatePositions();
+    },
+
+    _expandSouthEast: function(cell) {
+        var levels = this.get('levels'),
+            level = levels[cell],
+            grouping = this.getGrouping(cell),
+            se = grouping[0],
+            receivers;
+
+        switch(level) {
+            case 1:
+                receivers = [se + 1, se + 4, se + 5];
+                break;
+            case 2:
+                receivers = [se + 2, se + 6, se + 8, se + 9, se + 10];
+                break;
+            default:
+                receivers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
+        }
+
+        this._reserveSpace(cell, receivers);
+        this.updatePositions();
+    },
+
+    _expandSouthWest: function(cell) {
+        var levels = this.get('levels'),
+            level = levels[cell],
+            grouping = this.getGrouping(cell),
+            nw,
+            receivers;
+
+        switch(level) {
+            case 1:
+                nw = grouping[0];
+                receivers = [nw - 1, nw + 3, nw + 4];
+                break;
+            case 2:
+                nw = grouping[2];
+                receivers = [nw - 5, nw - 1, nw + 3, nw + 4, nw + 5];
+                break;
+            default:
+                receivers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
+        }
+
+        this._reserveSpace(cell, receivers);
+        this.updatePositions();
+    },
+
+    _expandNorthWest: function(cell) {
+        var levels = this.get('levels'),
+            level = levels[cell],
+            grouping = this.getGrouping(cell),
+            nw = grouping[0],
+            receivers;
+
+        switch(level) {
+            case 1:
+                receivers = [nw - 5, nw - 4, nw - 1];
+                break;
+            case 2:
+                receivers = [nw + 3, nw - 1, nw - 3, nw - 4, nw - 5];
+                break;
+            default:
+                receivers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
+        }
+
+        this._reserveSpace(cell, receivers);
+        this.updatePositions();
+    },
+
+    _reserveSpace: function(cell, receivers) {
+        var spaces = this.get('spaces');
+
+        receivers.forEach(function(rec) {
+            this._prepareBreakBrick(rec);
+        }, this);
+
+        receivers.forEach(function(rec) {
+            spaces[rec] = cell;
+        }, this);
     },
 
     isCellEmpty: function(cell) {
@@ -332,6 +431,22 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
 
     _clickBreakArrowOnCell: function(cell) {
         this.breakBrick(cell);
+    },
+
+    _clickNorthEastArrowOnCell: function(cell) {
+        this._expandNorthEast(cell);
+    },
+
+    _clickNorthWestArrowOnCell: function(cell) {
+        this._expandNorthWest(cell);
+    },
+
+    _clickSouthWestArrowOnCell: function(cell) {
+        this._expandSouthWest(cell);
+    },
+
+    _clickSouthEastArrowOnCell: function(cell) {
+        this._expandSouthEast(cell);
     },
 
     arrowClickHandler: function(event) {
