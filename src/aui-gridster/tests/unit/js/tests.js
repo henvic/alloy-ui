@@ -496,6 +496,126 @@ YUI.add('aui-gridster-tests', function(Y) {
             }
         },
 
+        'expand blocks': function() {
+            var arrows = gridster.get('arrows'),
+                cells = gridster.get('cells'),
+                spaces = gridster.get('spaces'),
+                steps = [],
+                expected = [];
+
+            function getArrow(direction) {
+                return arrows.filter('[data-direction="' + direction + '"]').item(0);
+            }
+
+            gridster.set('showController', true);
+
+            steps.push([7, 'SouthWest']);
+            expected.push([0, 1, 2, 3, 4, 5, 7, 7, 8, 9, 7, 7, 12, 13, 14, 15]);
+
+            steps.push([7, 'SouthWest']);
+            expected.push([0, 1, 2, 3, 4, 7, 7, 7, 8, 7, 7, 7, 12, 7, 7, 7]);
+
+            steps.push([0, 'SouthEast']);
+            expected.push([0, 0, 2, 3, 0, 0, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]);
+
+            steps.push([10, 'SouthEast']);
+            expected.push([0, 0, 2, 3, 0, 0, 6, 7, 8, 9, 10, 10, 12, 13, 10, 10]);
+
+            steps.push([0, 'SouthEast']);
+            expected.push([0, 0, 0, 3, 0, 0, 0, 7, 0, 0, 0, 11, 12, 13, 14, 15]);
+
+            steps.push([15, 'NorthWest']);
+            expected.push([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 15, 15, 12, 13, 15, 15]);
+
+            steps.push([9, 'NorthWest']);
+            expected.push([0, 1, 2, 3, 9, 9, 6, 7, 9, 9, 15, 15, 12, 13, 15, 15]);
+
+            steps.push([13, 'NorthEast']);
+            expected.push([0, 1, 2, 3, 4, 5, 6, 7, 8, 13, 13, 11, 12, 13, 13, 15]);
+
+            steps.push([6, 'NorthEast']);
+            expected.push([0, 1, 6, 6, 4, 5, 6, 6, 8, 13, 13, 11, 12, 13, 13, 15]);
+
+            steps.push([13, 'NorthEast']);
+            expected.push([0, 1, 2, 3, 4, 13, 13, 13, 8, 13, 13, 13, 12, 13, 13, 13]);
+
+            steps.push([2, 'SouthEast']);
+            expected.push([0, 1, 2, 2, 4, 5, 2, 2, 8, 9, 10, 11, 12, 13, 14, 15]);
+
+            steps.push([2, 'Break']);
+            expected.push([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]);
+
+            steps.push([4, 'SouthEast']);
+            expected.push([0, 1, 2, 3, 4, 4, 6, 7, 4, 4, 10, 11, 12, 13, 14, 15]);
+
+            steps.push([6, 'SouthEast']);
+            expected.push([0, 1, 2, 3, 4, 4, 6, 6, 4, 4, 6, 6, 12, 13, 14, 15]);
+
+            steps.push([6, 'NorthWest']);
+            expected.push([0, 6, 6, 6, 4, 6, 6, 6, 8, 6, 6, 6, 12, 13, 14, 15]);
+
+            steps.push([6, 'Break']);
+            expected.push([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]);
+
+            steps.push([4, 'SouthEast']);
+            expected.push([0, 1, 2, 3, 4, 4, 6, 7, 4, 4, 10, 11, 12, 13, 14, 15]);
+
+            steps.push([6, 'SouthEast']);
+            expected.push([0, 1, 2, 3, 4, 4, 6, 6, 4, 4, 6, 6, 12, 13, 14, 15]);
+
+            steps.push([6, 'NorthWest']);
+            expected.push([0, 6, 6, 6, 4, 6, 6, 6, 8, 6, 6, 6, 12, 13, 14, 15]);
+
+            steps.push([6, 'SouthWest']);
+            expected.push([6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6]);
+
+            steps.push([6, 'Break']);
+            expected.push([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]);
+
+            steps.push([15, 'NorthWest']);
+            expected.push([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 15, 15, 12, 13, 15, 15]);
+
+            steps.push([15, 'NorthWest']);
+            expected.push([0, 1, 2, 3, 4, 15, 15, 15, 8, 15, 15, 15, 12, 15, 15, 15]);
+
+            steps.push([15, 'NorthWest']);
+            expected.push([15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15]);
+
+            steps.push([15, 'Break']);
+            expected.push([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]);
+
+            steps.push([9, 'NorthEast']);
+            expected.push([0, 1, 2, 3, 4, 9, 9, 7, 8, 9, 9, 11, 12, 13, 14, 15]);
+
+            steps.push([9, 'SouthWest']);
+            expected.push([0, 1, 2, 3, 9, 9, 9, 7, 9, 9, 9, 11, 9, 9, 9, 15]);
+
+            steps.push([9, 'NorthEast']);
+            expected.push([9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9]);
+
+            steps.push([9, 'Break']);
+            expected.push([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]);
+
+            steps.push([0, 'SouthEast']);
+            expected.push([0, 0, 2, 3, 0, 0, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]);
+
+            steps.push([0, 'SouthEast']);
+            expected.push([0, 0, 0, 3, 0, 0, 0, 7, 0, 0, 0, 11, 12, 13, 14, 15]);
+
+            steps.push([0, 'SouthEast']);
+            expected.push([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
+
+            steps.forEach(function(params, step) {
+                var arrow = getArrow(params[1]),
+                    cell = cells.item(params[0]);
+
+                cell.simulate('mouseover');
+                arrow.simulate('click');
+                Assert.areSame('block', arrow.getStyle('display'));
+                Y.ArrayAssert.itemsAreSame(expected[step], spaces);
+            });
+        },
+
         'should have arrows limited by the edge boundaries when controller is on': function() {
             var arrows = gridster.get('arrows'),
                 cells = gridster.get('cells'),
