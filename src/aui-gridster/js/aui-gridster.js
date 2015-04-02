@@ -96,7 +96,7 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
             b = diagonalShown - counter;
 
         return !((a <= 15 && !this.isCellAvailable(a)) ||
-            (cell >= 0 && !this.isCellAvailable(b)));
+            (b >= 0 && !this.isCellAvailable(b)));
     },
 
     _isAdjacentCellAvailableRight: function(cell, diagonalShown, counter) {
