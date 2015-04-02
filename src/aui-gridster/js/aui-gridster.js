@@ -214,6 +214,7 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
         var direction = arrow.getData('direction'),
             method = '_move' + direction + 'ArrowToCell';
 
+        arrow.blur();
         this[method](arrow, cell);
     },
 
