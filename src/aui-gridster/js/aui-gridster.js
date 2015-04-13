@@ -18,10 +18,10 @@
 
 A.Gridster = A.Base.create('gridster', A.Widget, [], {
     TPL_CONTROLLER_ARROWS: '<div class="gridster-controller-arrows">' +
-                '<button data-direction="SouthEast">SE</button>' +
-                '<button data-direction="SouthWest">SW</button>' +
-                '<button data-direction="NorthEast">NE</button>' +
-                '<button data-direction="NorthWest">NW</button>' +
+                '<button data-direction="BottomRight">SE</button>' +
+                '<button data-direction="BottomLeft">SW</button>' +
+                '<button data-direction="TopRight">NE</button>' +
+                '<button data-direction="TopLeft">NW</button>' +
                 '<button data-direction="Break">BK</button></div>',
 
     BUTTON_SIZE: 5,
@@ -76,7 +76,7 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
         }
     },
 
-    _expandNorthEast: function(cell) {
+    _expandTopRight: function(cell) {
         var levels = this.get('levels'),
             level = levels[cell],
             grouping = this.getGrouping(cell),
@@ -98,7 +98,7 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
         this.updatePositions();
     },
 
-    _expandSouthEast: function(cell) {
+    _expandBottomRight: function(cell) {
         var levels = this.get('levels'),
             level = levels[cell],
             grouping = this.getGrouping(cell),
@@ -120,7 +120,7 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
         this.updatePositions();
     },
 
-    _expandSouthWest: function(cell) {
+    _expandBottomLeft: function(cell) {
         var levels = this.get('levels'),
             level = levels[cell],
             grouping = this.getGrouping(cell),
@@ -144,7 +144,7 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
         this.updatePositions();
     },
 
-    _expandNorthWest: function(cell) {
+    _expandTopLeft: function(cell) {
         var levels = this.get('levels'),
             level = levels[cell],
             grouping = this.getGrouping(cell),
@@ -242,19 +242,19 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
         return true;
     },
 
-    _verifyNorthBoundaryCell: function(cell) {
+    _verifyTopBoundaryCell: function(cell) {
         return Math.floor(cell / 4) === 0;
     },
 
-    _verifySouthBoundaryCell: function(cell) {
+    _verifyBottomBoundaryCell: function(cell) {
         return Math.floor(cell / 4) === 3;
     },
 
-    _verifyWestBoundaryCell: function(cell) {
+    _verifyLeftBoundaryCell: function(cell) {
         return (cell % 4 === 0);
     },
 
-    _verifyEastBoundaryCell: function(cell) {
+    _verifyRightBoundaryCell: function(cell) {
         return cell % 4 === 3;
     },
 
@@ -267,7 +267,7 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
     },
 
     _verifyBoundaries: function(direction, grouping) {
-        return ['North', 'South', 'West', 'East'].some(function(vector) {
+        return ['Top', 'Bottom', 'Left', 'Right'].some(function(vector) {
             return this._verifyBoundary(direction, vector, grouping);
         }, this);
     },
@@ -286,10 +286,10 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
             opt;
 
         directions = {
-            SouthEast: [grouping[grouping.length - 1] + 5, 'Left', 'Top'],
-            SouthWest: [grouping[[0, 2, 6][level - 1]] + 3, 'Right', 'Top'],
-            NorthEast: [grouping[level - 1] - 3, 'Left', 'Bottom'],
-            NorthWest: [grouping[0] - 5, 'Right', 'Bottom']
+            BottomRight: [grouping[grouping.length - 1] + 5, 'Left', 'Top'],
+            BottomLeft: [grouping[[0, 2, 6][level - 1]] + 3, 'Right', 'Top'],
+            TopRight: [grouping[level - 1] - 3, 'Left', 'Bottom'],
+            TopLeft: [grouping[0] - 5, 'Right', 'Bottom']
         };
 
         if ((currentNode.getStyle('display') === 'none') ||
@@ -317,7 +317,7 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
         this[method](arrow, cell);
     },
 
-    _moveNorthEastArrowToCell: function(arrow, cell) {
+    _moveTopRightArrowToCell: function(arrow, cell) {
         var currentNode = this.get('cells').item(cell);
 
         arrow.setStyles({
@@ -330,7 +330,7 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
         });
     },
 
-    _moveNorthWestArrowToCell: function(arrow, cell) {
+    _moveTopLeftArrowToCell: function(arrow, cell) {
         var currentNode = this.get('cells').item(cell);
 
         arrow.setStyles({
@@ -340,7 +340,7 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
         });
     },
 
-    _moveSouthEastArrowToCell: function(arrow, cell) {
+    _moveBottomRightArrowToCell: function(arrow, cell) {
         var currentNode = this.get('cells').item(cell);
 
         arrow.setStyles({
@@ -356,7 +356,7 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
         });
     },
 
-    _moveSouthWestArrowToCell: function(arrow, cell) {
+    _moveBottomLeftArrowToCell: function(arrow, cell) {
         var currentNode = this.get('cells').item(cell);
 
         arrow.setStyles({
@@ -427,20 +427,20 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
         this.breakBrick(cell);
     },
 
-    _clickNorthEastArrowOnCell: function(cell) {
-        this._expandNorthEast(cell);
+    _clickTopRightArrowOnCell: function(cell) {
+        this._expandTopRight(cell);
     },
 
-    _clickNorthWestArrowOnCell: function(cell) {
-        this._expandNorthWest(cell);
+    _clickTopLeftArrowOnCell: function(cell) {
+        this._expandTopLeft(cell);
     },
 
-    _clickSouthWestArrowOnCell: function(cell) {
-        this._expandSouthWest(cell);
+    _clickBottomLeftArrowOnCell: function(cell) {
+        this._expandBottomLeft(cell);
     },
 
-    _clickSouthEastArrowOnCell: function(cell) {
-        this._expandSouthEast(cell);
+    _clickBottomRightArrowOnCell: function(cell) {
+        this._expandBottomRight(cell);
     },
 
     arrowClickHandler: function(event) {
