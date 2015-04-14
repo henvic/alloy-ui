@@ -17,12 +17,19 @@
  */
 
 A.Gridster = A.Base.create('gridster', A.Widget, [], {
-    TPL_CONTROLLER_ARROWS: '<div class="gridster-controller-arrows">' +
-                '<button data-direction="BottomRight">SE</button>' +
-                '<button data-direction="BottomLeft">SW</button>' +
-                '<button data-direction="TopRight">NE</button>' +
-                '<button data-direction="TopLeft">NW</button>' +
-                '<button data-direction="Break">BK</button></div>',
+    RESIZE_DIRECTION_KEYS: {
+        br: 'BottomRight',
+        bl: 'BottomLeft',
+        tr: 'TopRight',
+        tl: 'TopLeft'
+    },
+
+    INVERSE_RESIZE_DIRECTION_KEYS: {
+        BottomRight: 'br',
+        BottomLeft: 'bl',
+        TopRight: 'tr',
+        TopLeft: 'tl'
+    },
 
     BUTTON_SIZE: 5,
 
@@ -181,7 +188,7 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
     isCellEmpty: function(cell) {
         var currentNode = this.get('cells').item(cell);
 
-        return currentNode.getHTML() === '';
+        return currentNode.one('.gridster-cell-content').getHTML() === '';
     },
 
     isCellAvailable: function(cell) {
@@ -242,48 +249,21 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
         return true;
     },
 
-    _verifyTopBoundaryCell: function(cell) {
-        return Math.floor(cell / 4) === 0;
-    },
+    _syncArrowOnCell: function(direction, cell) {
+        var level = this.get('levels')[cell],
+            grouping,
+            directions,
+            opt,
+            diagonal,
+            dirX,
+            dirY;
 
-    _verifyBottomBoundaryCell: function(cell) {
-        return Math.floor(cell / 4) === 3;
-    },
-
-    _verifyLeftBoundaryCell: function(cell) {
-        return (cell % 4 === 0);
-    },
-
-    _verifyRightBoundaryCell: function(cell) {
-        return cell % 4 === 3;
-    },
-
-    _verifyBoundary: function(direction, vector, cells) {
-        if (direction.indexOf(vector) === -1) {
-            return false;
+        if (level > 1) {
+            this._displayArrowOnCell(cell, direction);
+            return;
         }
 
-        return cells.some(this['_verify' + vector + 'BoundaryCell']);
-    },
-
-    _verifyBoundaries: function(direction, grouping) {
-        return ['Top', 'Bottom', 'Left', 'Right'].some(function(vector) {
-            return this._verifyBoundary(direction, vector, grouping);
-        }, this);
-    },
-
-    _verifyDirection: function(cell, diagonal, level, dirX, dirY) {
-        return (diagonal < 0 || diagonal > 15 ||
-            !this._areAdjacentCellsAvailable(cell, diagonal, level, dirX, dirY));
-    },
-
-    _syncArrowToCell: function(arrow, cell) {
-        var direction = arrow.getData('direction'),
-            level = this.get('levels')[cell],
-            currentNode = this.get('cells').item(cell),
-            grouping = this.getGrouping(cell),
-            directions,
-            opt;
+        grouping = this.getGrouping(cell);
 
         directions = {
             BottomRight: [grouping[grouping.length - 1] + 5, 'Left', 'Top'],
@@ -292,119 +272,44 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
             TopLeft: [grouping[0] - 5, 'Right', 'Bottom']
         };
 
-        if ((currentNode.getStyle('display') === 'none') ||
-            this._verifyBoundaries(direction, grouping) ||
-            (direction === 'Break' && level < 2)) {
-            this._hideArrow(arrow);
-            return;
-        }
-
         opt = directions[direction];
 
-        if (direction !== 'Break' && this._verifyDirection(cell, opt[0], level, opt[1], opt[2])) {
-            this._hideArrow(arrow);
+        diagonal = opt[0];
+        dirX = opt[1];
+        dirY = opt[2];
+
+        if ((diagonal < 0 || diagonal > 15 ||
+            (((((cell + 1) % 4) === 0) && (direction === 'TopRight' || direction === 'BottomRight')))) ||
+            ((((cell + 1) % 4) === 1) && (direction === 'TopLeft' || direction === 'BottomLeft'))) {
             return;
         }
 
-        this._moveArrowToCell(arrow, cell);
+        if (this._areAdjacentCellsAvailable(cell, diagonal, level, dirX, dirY)) {
+            this._displayArrowOnCell(cell, direction);
+        }
     },
 
-    _moveArrowToCell: function(arrow, cell) {
-        var direction = arrow.getData('direction'),
-            method = '_move' + direction + 'ArrowToCell';
-
-        arrow.blur();
-        this[method](arrow, cell);
-    },
-
-    _moveTopRightArrowToCell: function(arrow, cell) {
+    _displayArrowOnCell: function(cell, direction) {
         var currentNode = this.get('cells').item(cell);
 
-        arrow.setStyles({
-            'display': 'block',
-            'top': currentNode.getStyle('top'),
-            'left': (
-            A.Number.parse(currentNode.getStyle('left').slice(0, -1)) +
-            A.Number.parse(currentNode.getStyle('width').slice(0, -1)) -
-            this.BUTTON_SIZE) + '%'
-        });
-    },
-
-    _moveTopLeftArrowToCell: function(arrow, cell) {
-        var currentNode = this.get('cells').item(cell);
-
-        arrow.setStyles({
-            'display': 'block',
-            'top': currentNode.getStyle('top'),
-            'left': currentNode.getStyle('left')
-        });
-    },
-
-    _moveBottomRightArrowToCell: function(arrow, cell) {
-        var currentNode = this.get('cells').item(cell);
-
-        arrow.setStyles({
-            'display': 'block',
-            'top': (
-                A.Number.parse(currentNode.getStyle('top').slice(0, -1)) +
-                A.Number.parse(currentNode.getStyle('height').slice(0, -1)) -
-                this.BUTTON_SIZE) + '%',
-            'left': (
-                A.Number.parse(currentNode.getStyle('left').slice(0, -1)) +
-                A.Number.parse(currentNode.getStyle('width').slice(0, -1)) -
-                this.BUTTON_SIZE) + '%'
-        });
-    },
-
-    _moveBottomLeftArrowToCell: function(arrow, cell) {
-        var currentNode = this.get('cells').item(cell);
-
-        arrow.setStyles({
-            'display': 'block',
-            'top': (
-                A.Number.parse(currentNode.getStyle('top').slice(0, -1)) +
-                A.Number.parse(currentNode.getStyle('height').slice(0, -1)) -
-                this.BUTTON_SIZE) + '%',
-            'left': currentNode.getStyle('left')
-        });
-    },
-
-    _moveBreakArrowToCell: function(arrow, cell) {
-        var currentNode = this.get('cells').item(cell);
-
-        arrow.setStyles({
-            'display': 'block',
-            'top': (
-                A.Number.parse(currentNode.getStyle('top').slice(0, -1)) +
-                (A.Number.parse(currentNode.getStyle('height').slice(0, -1)) * 0.55) -
-                this.BUTTON_SIZE) + '%',
-            'left': (
-                A.Number.parse(currentNode.getStyle('left').slice(0, -1)) +
-                (A.Number.parse(currentNode.getStyle('width').slice(0, -1)) * 0.55) -
-                this.BUTTON_SIZE) + '%'
-        });
+        currentNode.one('> .yui3-resize-handles-wrapper .yui3-resize-handle-' +
+            this.INVERSE_RESIZE_DIRECTION_KEYS[direction]).setStyle('display', 'block');
     },
 
     syncControllerToCell: function(cell) {
-        var arrows = this.get('arrows');
-
         this.set('controllerCell', cell);
 
-        arrows.each(function(arrow) {
-            this._syncArrowToCell(arrow, cell);
+        this._hideAllResizingHandles();
+
+        A.Array.each(['TopLeft', 'TopRight', 'BottomLeft', 'BottomRight'], function(direction) {
+            this._syncArrowOnCell(direction, cell);
         }, this);
 
         this.fire('controller-sync');
     },
 
-    _hideArrow: function(arrow) {
-        arrow.setStyle('display', 'none');
-    },
-
     hideControllers: function() {
-        var arrows = this.get('arrows');
-
-        arrows.setStyle('display', 'none');
+        this._hideAllResizingHandles();
     },
 
     mouseOverCellHandler: function(event) {
@@ -423,70 +328,118 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
         this.hideControllers();
     },
 
-    _clickBreakArrowOnCell: function(cell) {
-        this.breakBrick(cell);
+    _expandCell: function(cell, position, level) {
+        var levels = this.get('levels'),
+            spaces = this.get('spaces'),
+            pastLevel = levels[spaces[cell]];
+
+        if (level === pastLevel) {
+            return;
+        }
+
+        if (level < pastLevel) {
+            this.breakBrick(cell);
+            return;
+        }
+
+        this[('_expand' + position)](cell);
     },
 
-    _clickTopRightArrowOnCell: function(cell) {
-        this._expandTopRight(cell);
+    _hideResizingHandles: function(cell) {
+        cell.all('.yui3-resize-handle').setStyle('display', 'none');
     },
 
-    _clickTopLeftArrowOnCell: function(cell) {
-        this._expandTopLeft(cell);
+    _hideAllResizingHandles: function() {
+        var cells = this.get('cells');
+
+        cells.all('.yui3-resize-handle').setStyle('display', 'none');
     },
 
-    _clickBottomLeftArrowOnCell: function(cell) {
-        this._expandBottomLeft(cell);
+    _addResizingHandle: function(cell) {
+        var currentNode = this.get('cells').item(cell),
+            resize = new A.Resize({
+            node: currentNode,
+            handles: 'tr, br, bl, tl'
+        });
+
+        resize.plug(A.Plugin.ResizeProxy);
+
+        resize.plug(A.Plugin.ResizeConstrained, {
+            preserveRatio: true,
+            constrain: this.get('boundingBox')
+        });
+
+        this._hideResizingHandles(currentNode);
+
+        resize.on('resize:end', function(event) {
+            var gridsterWidth = this.get('boundingBox').getStyle('width').slice(0, -2),
+                region = resize.proxy.get('proxyNode').get('region'),
+                levelF = 4 * region.width / gridsterWidth,
+                level = Math.ceil(levelF);
+
+            resize.proxy.get('proxyNode').hide();
+            event.preventDefault();
+
+            // allowance to avoid expanding more than what is desired
+            if ((level - levelF) > 0.9) {
+                level -= 1;
+            }
+
+            if (level === 0) {
+                level = 1;
+            }
+
+            this._expandCell(cell, this.RESIZE_DIRECTION_KEYS[resize.get('activeHandle')], level);
+
+            event.preventDefault();
+        }, this);
+
+        return resize;
     },
 
-    _clickBottomRightArrowOnCell: function(cell) {
-        this._expandBottomRight(cell);
-    },
+    _addResizingHandles: function() {
+        var handles = [],
+            cells = this.get('cells');
 
-    arrowClickHandler: function(event) {
-        var direction = event.target.getData('direction'),
-            method = '_click' + direction + 'ArrowOnCell',
-            controllerCell = this.get('controllerCell'),
-            gridster = this;
+        if (this.get('resizingHandles')) {
+            return;
+        }
 
-        this[method](controllerCell);
+        cells.each(function(cell, pos) {
+            handles.push(this._addResizingHandle(pos));
+        }, this);
 
-        setTimeout(function() {
-            gridster.syncControllerToCell(controllerCell);
-        }, 0);
+        this._hideAllResizingHandles();
 
-        this.fire('controller-action-' + direction);
+        this.set('resizingHandles', handles);
     },
 
     initializer: function() {
         var boundingBox = this.get('boundingBox'),
             boundingBoxId = '#' + boundingBox.get('id'),
-            cells = A.all(boundingBoxId + ' .gridster-content .gridster-cell'),
-            controllerNode = this.get('boundingBox').appendChild(this.TPL_CONTROLLER_ARROWS),
-            arrows;
-
-        this.set('controllerNode', controllerNode);
-
-        arrows = A.all(boundingBoxId + ' .gridster-controller-arrows button');
+            cells = A.all(boundingBoxId + ' .gridster-content .gridster-cell');
 
         this.set('cells', cells);
 
         this._createLevels();
 
-        this.set('arrows', arrows);
-
-        cells.on('mouseover', A.bind(this.mouseOverCellHandler, this));
-
-        arrows.on('click', A.bind(this.arrowClickHandler, this));
+        cells.on('mouseenter', A.bind(this.mouseOverCellHandler, this));
 
         boundingBox.on('mouseleave', A.bind(this.mouseLeaveGridsterHandler, this), this);
 
-        this._eventHandles = [cells, arrows];
+        this._eventHandles = [cells];
+
+        if (this.get('showController')) {
+            this._addResizingHandles();
+        }
     },
 
     destructor: function() {
+        A.Array.each(this.get('resizingHandles'), function(resize) {
+            resize.destroy();
+        });
+
         (new A.EventHandle(this._eventHandles)).detach();
-        this.get('boundingBox').removeChild(this.get('controllerNode'));
     },
 
     _updatePosition: function(cell) {
@@ -586,6 +539,10 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
             setter: function(value) {
                 if (!value) {
                     this.hideControllers();
+                }
+
+                if (value) {
+                    this._addResizingHandles();
                 }
 
                 return value;
