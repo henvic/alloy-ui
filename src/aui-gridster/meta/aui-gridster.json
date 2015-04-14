@@ -13,6 +13,8 @@
             "widget-position-constrain",
             "widget-stack",
             "widget-stdmod",
+            "resize",
+            "resize-proxy",
             "aui-classnamemanager",
             "aui-component",
             "aui-debounce",
