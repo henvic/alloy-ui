@@ -83,96 +83,6 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
         }
     },
 
-    _expandTopRight: function(cell) {
-        var levels = this.get('levels'),
-            level = levels[cell],
-            grouping = this.getGrouping(cell),
-            ne = grouping[level - 1],
-            receivers;
-
-        switch(level) {
-            case 1:
-                receivers = [ne + 1, ne - 3, ne - 4];
-                break;
-            case 2:
-                receivers = [ne - 5, ne - 4, ne - 3, ne + 1, ne + 5];
-                break;
-            default:
-                receivers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
-        }
-
-        this._reserveSpace(cell, receivers);
-        this.updatePositions();
-    },
-
-    _expandBottomRight: function(cell) {
-        var levels = this.get('levels'),
-            level = levels[cell],
-            grouping = this.getGrouping(cell),
-            se = grouping[0],
-            receivers;
-
-        switch(level) {
-            case 1:
-                receivers = [se + 1, se + 4, se + 5];
-                break;
-            case 2:
-                receivers = [se + 2, se + 6, se + 8, se + 9, se + 10];
-                break;
-            default:
-                receivers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
-        }
-
-        this._reserveSpace(cell, receivers);
-        this.updatePositions();
-    },
-
-    _expandBottomLeft: function(cell) {
-        var levels = this.get('levels'),
-            level = levels[cell],
-            grouping = this.getGrouping(cell),
-            nw,
-            receivers;
-
-        switch(level) {
-            case 1:
-                nw = grouping[0];
-                receivers = [nw - 1, nw + 3, nw + 4];
-                break;
-            case 2:
-                nw = grouping[2];
-                receivers = [nw - 5, nw - 1, nw + 3, nw + 4, nw + 5];
-                break;
-            default:
-                receivers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
-        }
-
-        this._reserveSpace(cell, receivers);
-        this.updatePositions();
-    },
-
-    _expandTopLeft: function(cell) {
-        var levels = this.get('levels'),
-            level = levels[cell],
-            grouping = this.getGrouping(cell),
-            nw = grouping[0],
-            receivers;
-
-        switch(level) {
-            case 1:
-                receivers = [nw - 5, nw - 4, nw - 1];
-                break;
-            case 2:
-                receivers = [nw + 3, nw - 1, nw - 3, nw - 4, nw - 5];
-                break;
-            default:
-                receivers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
-        }
-
-        this._reserveSpace(cell, receivers);
-        this.updatePositions();
-    },
-
     _reserveSpace: function(cell, receivers) {
         var spaces = this.get('spaces');
 
@@ -328,10 +238,101 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
         this.hideControllers();
     },
 
+    _expandTopRight: function(cell) {
+        var levels = this.get('levels'),
+            level = levels[cell],
+            grouping = this.getGrouping(cell),
+            ne = grouping[level - 1],
+            receivers;
+
+        switch(level) {
+            case 1:
+                receivers = [ne + 1, ne - 3, ne - 4];
+                break;
+            case 2:
+                receivers = [ne - 5, ne - 4, ne - 3, ne + 1, ne + 5];
+                break;
+            default:
+                receivers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
+        }
+
+        this._reserveSpace(cell, receivers);
+        this.updatePositions();
+    },
+
+    _expandBottomRight: function(cell) {
+        var levels = this.get('levels'),
+            level = levels[cell],
+            grouping = this.getGrouping(cell),
+            se = grouping[0],
+            receivers;
+
+        switch(level) {
+            case 1:
+                receivers = [se + 1, se + 4, se + 5];
+                break;
+            case 2:
+                receivers = [se + 2, se + 6, se + 8, se + 9, se + 10];
+                break;
+            default:
+                receivers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
+        }
+
+        this._reserveSpace(cell, receivers);
+        this.updatePositions();
+    },
+
+    _expandBottomLeft: function(cell) {
+        var levels = this.get('levels'),
+            level = levels[cell],
+            grouping = this.getGrouping(cell),
+            nw,
+            receivers;
+
+        switch(level) {
+            case 1:
+                nw = grouping[0];
+                receivers = [nw - 1, nw + 3, nw + 4];
+                break;
+            case 2:
+                nw = grouping[2];
+                receivers = [nw - 5, nw - 1, nw + 3, nw + 4, nw + 5];
+                break;
+            default:
+                receivers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
+        }
+
+        this._reserveSpace(cell, receivers);
+        this.updatePositions();
+    },
+
+    _expandTopLeft: function(cell) {
+        var levels = this.get('levels'),
+            level = levels[cell],
+            grouping = this.getGrouping(cell),
+            nw = grouping[0],
+            receivers;
+
+        switch(level) {
+            case 1:
+                receivers = [nw - 5, nw - 4, nw - 1];
+                break;
+            case 2:
+                receivers = [nw + 3, nw - 1, nw - 3, nw - 4, nw - 5];
+                break;
+            default:
+                receivers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
+        }
+
+        this._reserveSpace(cell, receivers);
+        this.updatePositions();
+    },
+
     _expandCell: function(cell, position, level) {
         var levels = this.get('levels'),
             spaces = this.get('spaces'),
-            pastLevel = levels[spaces[cell]];
+            pastLevel = levels[spaces[cell]],
+            counter;
 
         if (level === pastLevel) {
             return;
@@ -342,7 +343,14 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
             return;
         }
 
-        this[('_expand' + position)](cell);
+        counter = level - pastLevel;
+
+        while (counter !== 0) {
+            this[('_expand' + position)](cell);
+            this.updatePositions();
+
+            counter -= 1;
+        }
     },
 
     _hideResizingHandles: function(cell) {
@@ -356,13 +364,18 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
     },
 
     _addResizingHandle: function(cell) {
-        var currentNode = this.get('cells').item(cell),
+        var cells = this.get('cells'),
+            levels = this.get('levels'),
+            currentNode = cells.item(cell),
+            initialStyle,
             resize = new A.Resize({
             node: currentNode,
             handles: 'tr, br, bl, tl'
         });
 
-        resize.plug(A.Plugin.ResizeProxy);
+        currentNode.plug(A.Plugin.Resize);
+
+        currentNode.set('handles', 'tr, br, bl, tl');
 
         resize.plug(A.Plugin.ResizeConstrained, {
             preserveRatio: true,
@@ -371,27 +384,88 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
 
         this._hideResizingHandles(currentNode);
 
-        resize.on('resize:end', function(event) {
-            var gridsterWidth = this.get('boundingBox').getStyle('width').slice(0, -2),
-                region = resize.proxy.get('proxyNode').get('region'),
-                levelF = 4 * region.width / gridsterWidth,
-                level = Math.ceil(levelF);
+        resize.on('resize:resize', function(event) {
+            var xD = 1,
+                yD = 1,
+                offset = event.dragEvent.info.offset,
+                region = currentNode.get('region'),
+                area = [],
+                level = levels[cell],
+                smaller;
 
-            resize.proxy.get('proxyNode').hide();
-            event.preventDefault();
+            if (event.target.changeTopHandles) {
+                yD = -1;
+            }
+
+            if (event.target.changeLeftHandles) {
+                xD = -1;
+            }
+
+            smaller = (xD * offset[0] < 0 || yD * offset[1] < 0);
+
+            if (level === 1 && smaller) {
+                event.preventDefault();
+                return;
+            }
+
+            if (smaller) {
+                return;
+            }
+
+            cells.each(function(cell, pos) {
+                if (cell.inRegion(region)) {
+                    area.push(pos);
+                }
+            }, this);
+
+            A.Array.some(area, function(item) {
+                if (item !== cell && cells.item([item]).intersect(region).area > 0 && !this.isCellAvailable(item)) {
+                    event.preventDefault();
+                    return true;
+                }
+            }, this);
+        }, this);
+
+        resize.on('resize:start', function() {
+            initialStyle = {
+                top: currentNode.getStyle('top'),
+                left: currentNode.getStyle('left'),
+                height: currentNode.getStyle('height'),
+                width: currentNode.getStyle('width')
+            };
+
+            currentNode.setStyle('z-index', currentNode.getStyle('z-index') + 1);
+        });
+
+        resize.on('resize:end', function(event) {
+            var region = resize.get('node').get('region'),
+                gridsterWidth = this.get('boundingBox').getStyle('width').slice(0, -2),
+                levelF = 4 * region.width / gridsterWidth,
+                newLevel = Math.ceil(levelF),
+                level = levels[cell];
+
+            currentNode.setStyle('z-index', currentNode.getStyle('z-index') - 1);
 
             // allowance to avoid expanding more than what is desired
-            if ((level - levelF) > 0.9) {
-                level -= 1;
+            if ((newLevel - levelF) > 0.9) {
+                newLevel -= 1;
             }
 
-            if (level === 0) {
-                level = 1;
+            if (newLevel === 0) {
+                newLevel = 1;
             }
 
-            this._expandCell(cell, this.RESIZE_DIRECTION_KEYS[resize.get('activeHandle')], level);
+            if (level === newLevel) {
+                setTimeout(function () {
+                    currentNode.setStyles(initialStyle);
+                }, 0);
+                return;
+            }
 
             event.preventDefault();
+
+            this._expandCell(cell, this.RESIZE_DIRECTION_KEYS[resize.get('activeHandle')], newLevel);
+
         }, this);
 
         return resize;
