@@ -213,10 +213,10 @@ YUI.add('aui-gridster-tests', function(Y) {
                 key;
 
             directions = {
-                SouthEast: false,
-                SouthWest: false,
-                NorthEast: false,
-                NorthWest: false
+                BottomRight: false,
+                BottomLeft: false,
+                TopRight: false,
+                TopLeft: false
             };
 
             arrows.each(function(arrow) {
@@ -237,10 +237,10 @@ YUI.add('aui-gridster-tests', function(Y) {
             var arrows = gridster.get('arrows'),
                 cell = gridster.get('cells').item(0),
                 expectedSet = {
-                    SouthEast: true,
-                    SouthWest: false,
-                    NorthEast: false,
-                    NorthWest: false,
+                    BottomRight: true,
+                    BottomLeft: false,
+                    TopRight: false,
+                    TopLeft: false,
                     Break: false
                 };
 
@@ -355,21 +355,21 @@ YUI.add('aui-gridster-tests', function(Y) {
                 });
             }
 
-            testBlockPositions([3], 'SouthWest', [2, 6, 7]);
-            testBlockPositions([2, 3, 6, 7], 'SouthWest', [1, 5, 9, 10, 11]);
-            testBlockPositions([1, 2, 3, 5, 6, 7, 9, 10, 11], 'SouthWest', [0, 4, 8, 12, 13, 14, 15]);
+            testBlockPositions([3], 'BottomLeft', [2, 6, 7]);
+            testBlockPositions([2, 3, 6, 7], 'BottomLeft', [1, 5, 9, 10, 11]);
+            testBlockPositions([1, 2, 3, 5, 6, 7, 9, 10, 11], 'BottomLeft', [0, 4, 8, 12, 13, 14, 15]);
 
-            testBlockPositions([9], 'NorthEast', [5, 6, 10]);
-            testBlockPositions([8, 9, 12, 13], 'NorthEast', [4, 5, 6, 10, 14]);
-            testBlockPositions([4, 5, 6, 8, 9, 10, 12, 13, 14], 'NorthEast', [0, 1, 2, 3, 7, 11, 15]);
+            testBlockPositions([9], 'TopRight', [5, 6, 10]);
+            testBlockPositions([8, 9, 12, 13], 'TopRight', [4, 5, 6, 10, 14]);
+            testBlockPositions([4, 5, 6, 8, 9, 10, 12, 13, 14], 'TopRight', [0, 1, 2, 3, 7, 11, 15]);
 
-            testBlockPositions([10], 'NorthWest', [5, 6, 9]);
-            testBlockPositions([10, 11, 14, 15], 'NorthWest', [5, 6, 7, 9, 13]);
-            testBlockPositions([5, 6, 7, 9, 10, 11, 13, 14, 15], 'NorthWest', [0, 1, 2, 3, 4, 8, 12]);
+            testBlockPositions([10], 'TopLeft', [5, 6, 9]);
+            testBlockPositions([10, 11, 14, 15], 'TopLeft', [5, 6, 7, 9, 13]);
+            testBlockPositions([5, 6, 7, 9, 10, 11, 13, 14, 15], 'TopLeft', [0, 1, 2, 3, 4, 8, 12]);
 
-            testBlockPositions([5], 'SouthEast', [6, 9, 10]);
-            testBlockPositions([5, 6, 9, 10], 'SouthEast', [7, 11, 13, 14, 15]);
-            testBlockPositions([0, 1, 2, 4, 5, 6, 8, 9, 10], 'SouthEast', [3, 7, 11, 12, 13, 14, 15]);
+            testBlockPositions([5], 'BottomRight', [6, 9, 10]);
+            testBlockPositions([5, 6, 9, 10], 'BottomRight', [7, 11, 13, 14, 15]);
+            testBlockPositions([0, 1, 2, 4, 5, 6, 8, 9, 10], 'BottomRight', [3, 7, 11, 12, 13, 14, 15]);
         },
 
         'should have arrows limited by the edge boundaries and breaks': function() {
@@ -386,15 +386,15 @@ YUI.add('aui-gridster-tests', function(Y) {
             gridster.updatePositions();
 
             arrowsCellSet = {
-                SouthEast: [0, 1, 5],
-                SouthWest: [1, 7],
-                NorthEast: [5, 12, 13],
-                NorthWest: [11, 13],
+                BottomRight: [0, 1, 5],
+                BottomLeft: [1, 7],
+                TopRight: [5, 12, 13],
+                TopLeft: [11, 13],
                 Break: [5, 7, 11]
             };
 
             arrowsExpectedPos = {
-                SouthEast: {
+                BottomRight: {
                     0: {
                         top: 20,
                         left: 20
@@ -408,7 +408,7 @@ YUI.add('aui-gridster-tests', function(Y) {
                         left: 45
                     }
                 },
-                SouthWest: {
+                BottomLeft: {
                     1: {
                         top: 20,
                         left: 25
@@ -418,7 +418,7 @@ YUI.add('aui-gridster-tests', function(Y) {
                         left: 50
                     }
                 },
-                NorthEast: {
+                TopRight: {
                     5: {
                         top: 25,
                         left: 45
@@ -432,7 +432,7 @@ YUI.add('aui-gridster-tests', function(Y) {
                         left: 45
                     }
                 },
-                NorthWest: {
+                TopLeft: {
                     11: {
                         top: 50,
                         left: 50
@@ -509,100 +509,100 @@ YUI.add('aui-gridster-tests', function(Y) {
 
             gridster.set('showController', true);
 
-            steps.push([7, 'SouthWest']);
+            steps.push([7, 'BottomLeft']);
             expected.push([0, 1, 2, 3, 4, 5, 7, 7, 8, 9, 7, 7, 12, 13, 14, 15]);
 
-            steps.push([7, 'SouthWest']);
+            steps.push([7, 'BottomLeft']);
             expected.push([0, 1, 2, 3, 4, 7, 7, 7, 8, 7, 7, 7, 12, 7, 7, 7]);
 
-            steps.push([0, 'SouthEast']);
+            steps.push([0, 'BottomRight']);
             expected.push([0, 0, 2, 3, 0, 0, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]);
 
-            steps.push([10, 'SouthEast']);
+            steps.push([10, 'BottomRight']);
             expected.push([0, 0, 2, 3, 0, 0, 6, 7, 8, 9, 10, 10, 12, 13, 10, 10]);
 
-            steps.push([0, 'SouthEast']);
+            steps.push([0, 'BottomRight']);
             expected.push([0, 0, 0, 3, 0, 0, 0, 7, 0, 0, 0, 11, 12, 13, 14, 15]);
 
-            steps.push([15, 'NorthWest']);
+            steps.push([15, 'TopLeft']);
             expected.push([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 15, 15, 12, 13, 15, 15]);
 
-            steps.push([9, 'NorthWest']);
+            steps.push([9, 'TopLeft']);
             expected.push([0, 1, 2, 3, 9, 9, 6, 7, 9, 9, 15, 15, 12, 13, 15, 15]);
 
-            steps.push([13, 'NorthEast']);
+            steps.push([13, 'TopRight']);
             expected.push([0, 1, 2, 3, 4, 5, 6, 7, 8, 13, 13, 11, 12, 13, 13, 15]);
 
-            steps.push([6, 'NorthEast']);
+            steps.push([6, 'TopRight']);
             expected.push([0, 1, 6, 6, 4, 5, 6, 6, 8, 13, 13, 11, 12, 13, 13, 15]);
 
-            steps.push([13, 'NorthEast']);
+            steps.push([13, 'TopRight']);
             expected.push([0, 1, 2, 3, 4, 13, 13, 13, 8, 13, 13, 13, 12, 13, 13, 13]);
 
-            steps.push([2, 'SouthEast']);
+            steps.push([2, 'BottomRight']);
             expected.push([0, 1, 2, 2, 4, 5, 2, 2, 8, 9, 10, 11, 12, 13, 14, 15]);
 
             steps.push([2, 'Break']);
             expected.push([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]);
 
-            steps.push([4, 'SouthEast']);
+            steps.push([4, 'BottomRight']);
             expected.push([0, 1, 2, 3, 4, 4, 6, 7, 4, 4, 10, 11, 12, 13, 14, 15]);
 
-            steps.push([6, 'SouthEast']);
+            steps.push([6, 'BottomRight']);
             expected.push([0, 1, 2, 3, 4, 4, 6, 6, 4, 4, 6, 6, 12, 13, 14, 15]);
 
-            steps.push([6, 'NorthWest']);
+            steps.push([6, 'TopLeft']);
             expected.push([0, 6, 6, 6, 4, 6, 6, 6, 8, 6, 6, 6, 12, 13, 14, 15]);
 
             steps.push([6, 'Break']);
             expected.push([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]);
 
-            steps.push([4, 'SouthEast']);
+            steps.push([4, 'BottomRight']);
             expected.push([0, 1, 2, 3, 4, 4, 6, 7, 4, 4, 10, 11, 12, 13, 14, 15]);
 
-            steps.push([6, 'SouthEast']);
+            steps.push([6, 'BottomRight']);
             expected.push([0, 1, 2, 3, 4, 4, 6, 6, 4, 4, 6, 6, 12, 13, 14, 15]);
 
-            steps.push([6, 'NorthWest']);
+            steps.push([6, 'TopLeft']);
             expected.push([0, 6, 6, 6, 4, 6, 6, 6, 8, 6, 6, 6, 12, 13, 14, 15]);
 
-            steps.push([6, 'SouthWest']);
+            steps.push([6, 'BottomLeft']);
             expected.push([6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6]);
 
             steps.push([6, 'Break']);
             expected.push([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]);
 
-            steps.push([15, 'NorthWest']);
+            steps.push([15, 'TopLeft']);
             expected.push([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 15, 15, 12, 13, 15, 15]);
 
-            steps.push([15, 'NorthWest']);
+            steps.push([15, 'TopLeft']);
             expected.push([0, 1, 2, 3, 4, 15, 15, 15, 8, 15, 15, 15, 12, 15, 15, 15]);
 
-            steps.push([15, 'NorthWest']);
+            steps.push([15, 'TopLeft']);
             expected.push([15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15]);
 
             steps.push([15, 'Break']);
             expected.push([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]);
 
-            steps.push([9, 'NorthEast']);
+            steps.push([9, 'TopRight']);
             expected.push([0, 1, 2, 3, 4, 9, 9, 7, 8, 9, 9, 11, 12, 13, 14, 15]);
 
-            steps.push([9, 'SouthWest']);
+            steps.push([9, 'BottomLeft']);
             expected.push([0, 1, 2, 3, 9, 9, 9, 7, 9, 9, 9, 11, 9, 9, 9, 15]);
 
-            steps.push([9, 'NorthEast']);
+            steps.push([9, 'TopRight']);
             expected.push([9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9]);
 
             steps.push([9, 'Break']);
             expected.push([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]);
 
-            steps.push([0, 'SouthEast']);
+            steps.push([0, 'BottomRight']);
             expected.push([0, 0, 2, 3, 0, 0, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]);
 
-            steps.push([0, 'SouthEast']);
+            steps.push([0, 'BottomRight']);
             expected.push([0, 0, 0, 3, 0, 0, 0, 7, 0, 0, 0, 11, 12, 13, 14, 15]);
 
-            steps.push([0, 'SouthEast']);
+            steps.push([0, 'BottomRight']);
             expected.push([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
 
             steps.forEach(function(params, step) {
@@ -621,10 +621,10 @@ YUI.add('aui-gridster-tests', function(Y) {
                 cells = gridster.get('cells'),
                 cell,
                 expectedSet = {
-                    SouthEast: [0, 1, 2, 4, 5, 6, 8, 9, 10],
-                    SouthWest: [1, 2, 3, 5, 6, 7, 9, 10, 11],
-                    NorthEast: [4, 5, 6, 8, 9, 10, 12, 13, 14],
-                    NorthWest: [5, 6, 7, 9, 10, 11, 13, 14, 15],
+                    BottomRight: [0, 1, 2, 4, 5, 6, 8, 9, 10],
+                    BottomLeft: [1, 2, 3, 5, 6, 7, 9, 10, 11],
+                    TopRight: [4, 5, 6, 8, 9, 10, 12, 13, 14],
+                    TopLeft: [5, 6, 7, 9, 10, 11, 13, 14, 15],
                     Break: []
                 };
 

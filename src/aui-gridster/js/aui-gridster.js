@@ -17,12 +17,19 @@
  */
 
 A.Gridster = A.Base.create('gridster', A.Widget, [], {
-    TPL_CONTROLLER_ARROWS: '<div class="gridster-controller-arrows">' +
-                '<button data-direction="SouthEast">SE</button>' +
-                '<button data-direction="SouthWest">SW</button>' +
-                '<button data-direction="NorthEast">NE</button>' +
-                '<button data-direction="NorthWest">NW</button>' +
-                '<button data-direction="Break">BK</button></div>',
+    RESIZE_DIRECTION_KEYS: {
+        br: 'BottomRight',
+        bl: 'BottomLeft',
+        tr: 'TopRight',
+        tl: 'TopLeft'
+    },
+
+    INVERSE_RESIZE_DIRECTION_KEYS: {
+        BottomRight: 'br',
+        BottomLeft: 'bl',
+        TopRight: 'tr',
+        TopLeft: 'tl'
+    },
 
     BUTTON_SIZE: 5,
 
@@ -76,96 +83,6 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
         }
     },
 
-    _expandNorthEast: function(cell) {
-        var levels = this.get('levels'),
-            level = levels[cell],
-            grouping = this.getGrouping(cell),
-            ne = grouping[level - 1],
-            receivers;
-
-        switch(level) {
-            case 1:
-                receivers = [ne + 1, ne - 3, ne - 4];
-                break;
-            case 2:
-                receivers = [ne - 5, ne - 4, ne - 3, ne + 1, ne + 5];
-                break;
-            default:
-                receivers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
-        }
-
-        this._reserveSpace(cell, receivers);
-        this.updatePositions();
-    },
-
-    _expandSouthEast: function(cell) {
-        var levels = this.get('levels'),
-            level = levels[cell],
-            grouping = this.getGrouping(cell),
-            se = grouping[0],
-            receivers;
-
-        switch(level) {
-            case 1:
-                receivers = [se + 1, se + 4, se + 5];
-                break;
-            case 2:
-                receivers = [se + 2, se + 6, se + 8, se + 9, se + 10];
-                break;
-            default:
-                receivers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
-        }
-
-        this._reserveSpace(cell, receivers);
-        this.updatePositions();
-    },
-
-    _expandSouthWest: function(cell) {
-        var levels = this.get('levels'),
-            level = levels[cell],
-            grouping = this.getGrouping(cell),
-            nw,
-            receivers;
-
-        switch(level) {
-            case 1:
-                nw = grouping[0];
-                receivers = [nw - 1, nw + 3, nw + 4];
-                break;
-            case 2:
-                nw = grouping[2];
-                receivers = [nw - 5, nw - 1, nw + 3, nw + 4, nw + 5];
-                break;
-            default:
-                receivers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
-        }
-
-        this._reserveSpace(cell, receivers);
-        this.updatePositions();
-    },
-
-    _expandNorthWest: function(cell) {
-        var levels = this.get('levels'),
-            level = levels[cell],
-            grouping = this.getGrouping(cell),
-            nw = grouping[0],
-            receivers;
-
-        switch(level) {
-            case 1:
-                receivers = [nw - 5, nw - 4, nw - 1];
-                break;
-            case 2:
-                receivers = [nw + 3, nw - 1, nw - 3, nw - 4, nw - 5];
-                break;
-            default:
-                receivers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
-        }
-
-        this._reserveSpace(cell, receivers);
-        this.updatePositions();
-    },
-
     _reserveSpace: function(cell, receivers) {
         var spaces = this.get('spaces');
 
@@ -181,7 +98,7 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
     isCellEmpty: function(cell) {
         var currentNode = this.get('cells').item(cell);
 
-        return currentNode.getHTML() === '';
+        return currentNode.one('.gridster-cell-content').getHTML() === '';
     },
 
     isCellAvailable: function(cell) {
@@ -242,185 +159,77 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
         return true;
     },
 
-    _verifyNorthBoundaryCell: function(cell) {
-        return Math.floor(cell / 4) === 0;
-    },
-
-    _verifySouthBoundaryCell: function(cell) {
-        return Math.floor(cell / 4) === 3;
-    },
-
-    _verifyWestBoundaryCell: function(cell) {
-        return (cell % 4 === 0);
-    },
-
-    _verifyEastBoundaryCell: function(cell) {
-        return cell % 4 === 3;
-    },
-
-    _verifyBoundary: function(direction, vector, cells) {
-        if (direction.indexOf(vector) === -1) {
-            return false;
-        }
-
-        return cells.some(this['_verify' + vector + 'BoundaryCell']);
-    },
-
-    _verifyBoundaries: function(direction, grouping) {
-        return ['North', 'South', 'West', 'East'].some(function(vector) {
-            return this._verifyBoundary(direction, vector, grouping);
-        }, this);
-    },
-
-    _verifyDirection: function(cell, diagonal, level, dirX, dirY) {
-        return (diagonal < 0 || diagonal > 15 ||
-            !this._areAdjacentCellsAvailable(cell, diagonal, level, dirX, dirY));
-    },
-
-    _syncArrowToCell: function(arrow, cell) {
-        var direction = arrow.getData('direction'),
-            level = this.get('levels')[cell],
-            currentNode = this.get('cells').item(cell),
-            grouping = this.getGrouping(cell),
+    _syncArrowOnCell: function(direction, cell) {
+        var level = this.get('levels')[cell],
+            grouping,
             directions,
-            opt;
+            opt,
+            diagonal,
+            dirX,
+            dirY;
 
-        directions = {
-            SouthEast: [grouping[grouping.length - 1] + 5, 'Left', 'Top'],
-            SouthWest: [grouping[[0, 2, 6][level - 1]] + 3, 'Right', 'Top'],
-            NorthEast: [grouping[level - 1] - 3, 'Left', 'Bottom'],
-            NorthWest: [grouping[0] - 5, 'Right', 'Bottom']
-        };
-
-        if ((currentNode.getStyle('display') === 'none') ||
-            this._verifyBoundaries(direction, grouping) ||
-            (direction === 'Break' && level < 2)) {
-            this._hideArrow(arrow);
+        if (level > 1) {
+            this._displayArrowOnCell(cell, direction);
             return;
         }
+
+        grouping = this.getGrouping(cell);
+
+        directions = {
+            BottomRight: [grouping[grouping.length - 1] + 5, 'Left', 'Top'],
+            BottomLeft: [grouping[[0, 2, 6][level - 1]] + 3, 'Right', 'Top'],
+            TopRight: [grouping[level - 1] - 3, 'Left', 'Bottom'],
+            TopLeft: [grouping[0] - 5, 'Right', 'Bottom']
+        };
 
         opt = directions[direction];
 
-        if (direction !== 'Break' && this._verifyDirection(cell, opt[0], level, opt[1], opt[2])) {
-            this._hideArrow(arrow);
+        diagonal = opt[0];
+        dirX = opt[1];
+        dirY = opt[2];
+
+        if ((diagonal < 0 || diagonal > 15 ||
+            (((((cell + 1) % 4) === 0) && (direction === 'TopRight' || direction === 'BottomRight')))) ||
+            ((((cell + 1) % 4) === 1) && (direction === 'TopLeft' || direction === 'BottomLeft'))) {
             return;
         }
 
-        this._moveArrowToCell(arrow, cell);
+        if (this._areAdjacentCellsAvailable(cell, diagonal, level, dirX, dirY)) {
+            this._displayArrowOnCell(cell, direction);
+        }
     },
 
-    _moveArrowToCell: function(arrow, cell) {
-        var direction = arrow.getData('direction'),
-            method = '_move' + direction + 'ArrowToCell';
-
-        arrow.blur();
-        this[method](arrow, cell);
-    },
-
-    _moveNorthEastArrowToCell: function(arrow, cell) {
+    _displayArrowOnCell: function(cell, direction) {
         var currentNode = this.get('cells').item(cell);
 
-        arrow.setStyles({
-            'display': 'block',
-            'top': currentNode.getStyle('top'),
-            'left': (
-            A.Number.parse(currentNode.getStyle('left').slice(0, -1)) +
-            A.Number.parse(currentNode.getStyle('width').slice(0, -1)) -
-            this.BUTTON_SIZE) + '%'
-        });
-    },
-
-    _moveNorthWestArrowToCell: function(arrow, cell) {
-        var currentNode = this.get('cells').item(cell);
-
-        arrow.setStyles({
-            'display': 'block',
-            'top': currentNode.getStyle('top'),
-            'left': currentNode.getStyle('left')
-        });
-    },
-
-    _moveSouthEastArrowToCell: function(arrow, cell) {
-        var currentNode = this.get('cells').item(cell);
-
-        arrow.setStyles({
-            'display': 'block',
-            'top': (
-                A.Number.parse(currentNode.getStyle('top').slice(0, -1)) +
-                A.Number.parse(currentNode.getStyle('height').slice(0, -1)) -
-                this.BUTTON_SIZE) + '%',
-            'left': (
-                A.Number.parse(currentNode.getStyle('left').slice(0, -1)) +
-                A.Number.parse(currentNode.getStyle('width').slice(0, -1)) -
-                this.BUTTON_SIZE) + '%'
-        });
-    },
-
-    _moveSouthWestArrowToCell: function(arrow, cell) {
-        var currentNode = this.get('cells').item(cell);
-
-        arrow.setStyles({
-            'display': 'block',
-            'top': (
-                A.Number.parse(currentNode.getStyle('top').slice(0, -1)) +
-                A.Number.parse(currentNode.getStyle('height').slice(0, -1)) -
-                this.BUTTON_SIZE) + '%',
-            'left': currentNode.getStyle('left')
-        });
-    },
-
-    _moveBreakArrowToCell: function(arrow, cell) {
-        var currentNode = this.get('cells').item(cell);
-
-        arrow.setStyles({
-            'display': 'block',
-            'top': (
-                A.Number.parse(currentNode.getStyle('top').slice(0, -1)) +
-                (A.Number.parse(currentNode.getStyle('height').slice(0, -1)) * 0.55) -
-                this.BUTTON_SIZE) + '%',
-            'left': (
-                A.Number.parse(currentNode.getStyle('left').slice(0, -1)) +
-                (A.Number.parse(currentNode.getStyle('width').slice(0, -1)) * 0.55) -
-                this.BUTTON_SIZE) + '%'
-        });
+        currentNode.one('> .yui3-resize-handles-wrapper .yui3-resize-handle-' +
+            this.INVERSE_RESIZE_DIRECTION_KEYS[direction]).setStyle('display', 'block');
     },
 
     syncControllerToCell: function(cell) {
-        var arrows = this.get('arrows');
-
         this.set('controllerCell', cell);
 
-        arrows.each(function(arrow) {
-            this._syncArrowToCell(arrow, cell);
+        this._hideAllResizingHandles();
+
+        A.Array.each(['TopLeft', 'TopRight', 'BottomLeft', 'BottomRight'], function(direction) {
+            this._syncArrowOnCell(direction, cell);
         }, this);
 
         this.fire('controller-sync');
     },
 
-    _hideArrow: function(arrow) {
-        arrow.setStyle('display', 'none');
-    },
-
     hideControllers: function() {
-        var arrows = this.get('arrows');
-
-        arrows.setStyle('display', 'none');
+        this._hideAllResizingHandles();
     },
 
     mouseOverCellHandler: function(event) {
-        var target,
-            parentNode,
-            children,
-            index;
+        var index;
 
         if (!this.get('showController')) {
             return;
         }
 
-        target = event.target;
-        parentNode = target.get('parentNode');
-        children = parentNode.get('children');
-        index = children.indexOf(target);
+        index = this.get('cells').indexOf(event.currentTarget);
 
         this.syncControllerToCell(index);
     },
@@ -429,70 +238,311 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
         this.hideControllers();
     },
 
-    _clickBreakArrowOnCell: function(cell) {
-        this.breakBrick(cell);
+    _expandTopRight: function(cell) {
+        var levels = this.get('levels'),
+            level = levels[cell],
+            grouping = this.getGrouping(cell),
+            ne = grouping[level - 1],
+            receivers;
+
+        switch(level) {
+            case 1:
+                receivers = [ne + 1, ne - 3, ne - 4];
+                break;
+            case 2:
+                receivers = [ne - 5, ne - 4, ne - 3, ne + 1, ne + 5];
+                break;
+            default:
+                receivers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
+        }
+
+        this._reserveSpace(cell, receivers);
+        this.updatePositions();
     },
 
-    _clickNorthEastArrowOnCell: function(cell) {
-        this._expandNorthEast(cell);
+    _expandBottomRight: function(cell) {
+        var levels = this.get('levels'),
+            level = levels[cell],
+            grouping = this.getGrouping(cell),
+            se = grouping[0],
+            receivers;
+
+        switch(level) {
+            case 1:
+                receivers = [se + 1, se + 4, se + 5];
+                break;
+            case 2:
+                receivers = [se + 2, se + 6, se + 8, se + 9, se + 10];
+                break;
+            default:
+                receivers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
+        }
+
+        this._reserveSpace(cell, receivers);
+        this.updatePositions();
     },
 
-    _clickNorthWestArrowOnCell: function(cell) {
-        this._expandNorthWest(cell);
+    _expandBottomLeft: function(cell) {
+        var levels = this.get('levels'),
+            level = levels[cell],
+            grouping = this.getGrouping(cell),
+            nw,
+            receivers;
+
+        switch(level) {
+            case 1:
+                nw = grouping[0];
+                receivers = [nw - 1, nw + 3, nw + 4];
+                break;
+            case 2:
+                nw = grouping[2];
+                receivers = [nw - 5, nw - 1, nw + 3, nw + 4, nw + 5];
+                break;
+            default:
+                receivers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
+        }
+
+        this._reserveSpace(cell, receivers);
+        this.updatePositions();
     },
 
-    _clickSouthWestArrowOnCell: function(cell) {
-        this._expandSouthWest(cell);
+    _expandTopLeft: function(cell) {
+        var levels = this.get('levels'),
+            level = levels[cell],
+            grouping = this.getGrouping(cell),
+            nw = grouping[0],
+            receivers;
+
+        switch(level) {
+            case 1:
+                receivers = [nw - 5, nw - 4, nw - 1];
+                break;
+            case 2:
+                receivers = [nw + 3, nw - 1, nw - 3, nw - 4, nw - 5];
+                break;
+            default:
+                receivers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
+        }
+
+        this._reserveSpace(cell, receivers);
+        this.updatePositions();
     },
 
-    _clickSouthEastArrowOnCell: function(cell) {
-        this._expandSouthEast(cell);
+    _expandCell: function(cell, position, level) {
+        var levels = this.get('levels'),
+            spaces = this.get('spaces'),
+            pastLevel = levels[spaces[cell]],
+            counter;
+
+        if (level === pastLevel) {
+            return;
+        }
+
+        if (level < pastLevel) {
+            this.breakBrick(cell);
+            pastLevel = levels[spaces[cell]];
+        }
+
+        counter = level - pastLevel;
+
+        while (counter !== 0) {
+            this[('_expand' + position)](cell);
+            this.updatePositions();
+
+            counter -= 1;
+        }
     },
 
-    arrowClickHandler: function(event) {
-        var direction = event.target.getData('direction'),
-            method = '_click' + direction + 'ArrowOnCell',
-            controllerCell = this.get('controllerCell'),
-            gridster = this;
+    _hideResizingHandles: function(cell) {
+        cell.all('.yui3-resize-handle').setStyle('display', 'none');
+    },
 
-        this[method](controllerCell);
+    _hideAllResizingHandles: function() {
+        var cells = this.get('cells');
 
-        setTimeout(function() {
-            gridster.syncControllerToCell(controllerCell);
-        }, 0);
+        cells.all('.yui3-resize-handle').setStyle('display', 'none');
+    },
 
-        this.fire('controller-action-' + direction);
+    _verifyBoundaryAlignment: function(currentNodeRegion) {
+        var boundingBox = this.get('boundingBox'),
+            boundingBoxRegion = boundingBox.get('region');
+
+        return (currentNodeRegion.top + 1 < boundingBoxRegion.top ||
+            currentNodeRegion.right - 1 > boundingBoxRegion.right ||
+            currentNodeRegion.left + 1 < boundingBoxRegion.left ||
+            currentNodeRegion.bottom - 1 > boundingBoxRegion.bottom);
+    },
+
+    _addResizingHandle: function(cell) {
+        var cells = this.get('cells'),
+            levels = this.get('levels'),
+            currentNode = cells.item(cell),
+            initialStyle,
+            resize = new A.Resize({
+            node: currentNode,
+            handles: 'tr, br, bl, tl'
+        });
+
+        currentNode.plug(A.Plugin.Resize);
+
+        currentNode.set('handles', 'tr, br, bl, tl');
+
+        resize.plug(A.Plugin.ResizeConstrained, {
+            preserveRatio: true
+        });
+
+        this._hideResizingHandles(currentNode);
+
+        resize.on('resize:align', function(event) {
+            var xD = 1,
+                yD = 1,
+                offset = event.dragEvent.info.offset,
+                level = levels[cell],
+                lastAlign = true,
+                smaller;
+
+            if (this._verifyBoundaryAlignment(currentNode.get('region'))) {
+                event.preventDefault();
+            }
+
+            if (event.target.changeTopHandles) {
+                yD = -1;
+            }
+
+            if (event.target.changeLeftHandles) {
+                xD = -1;
+            }
+
+            smaller = (xD * offset[0] < 0 || yD * offset[1] < 0);
+
+            if (level === 1 && smaller) {
+                event.preventDefault();
+                return;
+            }
+
+            if (smaller) {
+                return;
+            }
+
+            cells.each(function(eachCell, pos) {
+                var intersection = currentNode.intersect(eachCell);
+
+                if (cell !== pos && intersection.inRegion && intersection.area > 100 && !this.isCellAvailable(pos)) {
+                    lastAlign = false;
+                }
+            }, this);
+
+            if (!lastAlign) {
+                event.preventDefault();
+            }
+        }, this);
+
+        resize.on('resize:start', function() {
+            initialStyle = {
+                top: currentNode.getStyle('top'),
+                left: currentNode.getStyle('left'),
+                height: currentNode.getStyle('height'),
+                width: currentNode.getStyle('width')
+            };
+
+            currentNode.setStyle('z-index', currentNode.getStyle('z-index') + 1);
+        });
+
+        resize.on('resize:end', function(event) {
+            var gridsterWidth = this.get('boundingBox').getStyle('width').slice(0, -2),
+                currentNodeRegion = currentNode.get('region'),
+                levelF = 4 * currentNodeRegion.width / gridsterWidth,
+                newLevel = Math.round(levelF),
+                level = levels[cell],
+                lastAlign = true;
+
+            event.preventDefault();
+
+            currentNode.setStyle('z-index', currentNode.getStyle('z-index') - 1);
+
+            if (newLevel === 0) {
+                newLevel = 1;
+            }
+
+            if (this._verifyBoundaryAlignment(currentNodeRegion)) {
+                console.log('Invalid region during alignment');
+                event.preventDefault();
+            }
+
+            cells.each(function(eachCell, pos) {
+                var intersection = currentNode.intersect(eachCell);
+
+                if (cell !== pos && intersection.inRegion && intersection.area > 200 && !this.isCellAvailable(pos)) {
+                    console.log('inside occupied region of ' + pos + ' with area ' + intersection.area);
+                    lastAlign = false;
+                }
+            }, this);
+
+            console.log('last align in end: ' + lastAlign);
+
+
+            if (level === newLevel || !lastAlign) {
+                console.log('xzz');
+                setTimeout(function () {
+                    currentNode.setStyles(initialStyle);
+                }, 0);
+                return;
+            }
+
+            if (lastAlign) {
+                this._expandCell(cell, this.RESIZE_DIRECTION_KEYS[resize.get('activeHandle')], newLevel);
+                console.log('new level = ' + newLevel);
+            }
+        }, this);
+
+        return resize;
+    },
+
+    _addResizingHandles: function() {
+        var handles = [],
+            cells = this.get('cells');
+
+        if (this.get('resizingHandles')) {
+            return;
+        }
+
+        cells.each(function(cell, pos) {
+            handles.push(this._addResizingHandle(pos));
+        }, this);
+
+        this._hideAllResizingHandles();
+
+        this.set('resizingHandles', handles);
     },
 
     initializer: function() {
         var boundingBox = this.get('boundingBox'),
             boundingBoxId = '#' + boundingBox.get('id'),
-            cells = A.all(boundingBoxId + ' .gridster-content .gridster-cell'),
-            controllerNode = this.get('boundingBox').appendChild(this.TPL_CONTROLLER_ARROWS),
-            arrows;
+            cells = A.all(boundingBoxId + ' .gridster-content .gridster-cell');
 
-        this.set('controllerNode', controllerNode);
-
-        arrows = A.all(boundingBoxId + ' .gridster-controller-arrows button');
+        boundingBox.addClass('gridster');
 
         this.set('cells', cells);
 
         this._createLevels();
 
-        this.set('arrows', arrows);
-
-        cells.on('mouseover', A.bind(this.mouseOverCellHandler, this));
-
-        arrows.on('click', A.bind(this.arrowClickHandler, this));
+        cells.on('mouseenter', A.bind(this.mouseOverCellHandler, this));
 
         boundingBox.on('mouseleave', A.bind(this.mouseLeaveGridsterHandler, this), this);
 
-        this._eventHandles = [cells, arrows];
+        this._eventHandles = [cells];
+
+        if (this.get('showController')) {
+            this._addResizingHandles();
+        }
     },
 
     destructor: function() {
+        A.Array.each(this.get('resizingHandles'), function(resize) {
+            resize.destroy();
+        });
+
         (new A.EventHandle(this._eventHandles)).detach();
-        this.get('boundingBox').removeChild(this.get('controllerNode'));
     },
 
     _updatePosition: function(cell) {
@@ -592,6 +642,10 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
             setter: function(value) {
                 if (!value) {
                     this.hideControllers();
+                }
+
+                if (value) {
+                    this._addResizingHandles();
                 }
 
                 return value;
