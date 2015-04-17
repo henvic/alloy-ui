@@ -16,6 +16,8 @@
  * @constructor
  */
 
+var MAX_INTERSECTION = 1000;
+
 A.Gridster = A.Base.create('gridster', A.Widget, [], {
     RESIZE_DIRECTION_KEYS: {
         br: 'BottomRight',
@@ -328,10 +330,58 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
         this.updatePositions();
     },
 
-    _expandCell: function(cell, position, level) {
+    _intersect: function(region, altRegion) {
+        var off;
+
+        function getOffsets(r1, r2) {
+            return {
+                top: Math.max(r1.top, r2.top),
+                right: Math.min(r1.right, r2.right),
+                bottom: Math.min(r1.bottom, r2.bottom),
+                left: Math.max(r1.left, r2.left)
+            };
+        }
+
+        off = getOffsets(region, altRegion);
+
+        return {
+            top: off.top,
+            right: off.right,
+            bottom: off.bottom,
+            left: off.left,
+            area: ((off.bottom - off.top) * (off.right - off.left)),
+            yoff: ((off.bottom - off.top)),
+            xoff: (off.right - off.left)
+        };
+    },
+
+    _extractTopLeftPositionFromSelection: function(originalGrouping, currentNodeRegion, boundingBoxRegion) {
+        var boxWidth = boundingBoxRegion.width / 4,
+            boxHeight = boundingBoxRegion.height / 4,
+            top = (currentNodeRegion.top - boundingBoxRegion.top) / boxHeight,
+            left = (currentNodeRegion.left - boundingBoxRegion.left) / boxWidth,
+            index = (Math.floor(top) * 4) + Math.floor(left);
+
+        return index;
+    },
+
+    _moveCellContent: function(cell, expansionCell) {
+        var cells = this.get('cells'),
+            expansionNode = cells.item(expansionCell),
+            cellNode = cells.item(cell),
+            oldNode = expansionNode.replaceChild(
+                cellNode.one('.gridster-cell-content'),
+                expansionNode.one('.gridster-cell-content'));
+
+        cellNode.append(oldNode);
+    },
+
+    _resizeCell: function(cell, position, level, currentNodeRegion, boundingBoxRegion) {
         var levels = this.get('levels'),
             spaces = this.get('spaces'),
+            originalGrouping = this.getGrouping(cell),
             pastLevel = levels[spaces[cell]],
+            expansionCell = cell,
             counter;
 
         if (level === pastLevel) {
@@ -341,15 +391,27 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
         if (level < pastLevel) {
             this.breakBrick(cell);
             pastLevel = levels[spaces[cell]];
+            expansionCell = this._extractTopLeftPositionFromSelection(originalGrouping, currentNodeRegion, boundingBoxRegion);
+
+            if (expansionCell !== cell) {
+                this._moveCellContent(cell, expansionCell);
+            }
         }
 
         counter = level - pastLevel;
 
         while (counter !== 0) {
-            this[('_expand' + position)](cell);
+            this[('_expand' + position)](expansionCell);
             this.updatePositions();
 
             counter -= 1;
+        }
+
+        if (expansionCell !== cell) {
+            this.fire('cellMoved', {
+                'old': cell,
+                'new': expansionCell
+            });
         }
     },
 
@@ -363,10 +425,7 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
         cells.all('.yui3-resize-handle').setStyle('display', 'none');
     },
 
-    _verifyBoundaryAlignment: function(currentNodeRegion) {
-        var boundingBox = this.get('boundingBox'),
-            boundingBoxRegion = boundingBox.get('region');
-
+    _verifyBoundaryAlignment: function(currentNodeRegion, boundingBoxRegion) {
         return (currentNodeRegion.top + 1 < boundingBoxRegion.top ||
             currentNodeRegion.right - 1 > boundingBoxRegion.right ||
             currentNodeRegion.left + 1 < boundingBoxRegion.left ||
@@ -399,9 +458,10 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
                 offset = event.dragEvent.info.offset,
                 level = levels[cell],
                 lastAlign = true,
+                boundingBox = this.get('boundingBox'),
                 smaller;
 
-            if (this._verifyBoundaryAlignment(currentNode.get('region'))) {
+            if (this._verifyBoundaryAlignment(currentNode.get('region'), boundingBox.get('region'))) {
                 event.preventDefault();
             }
 
@@ -427,7 +487,7 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
             cells.each(function(eachCell, pos) {
                 var intersection = currentNode.intersect(eachCell);
 
-                if (cell !== pos && intersection.inRegion && intersection.area > 100 && !this.isCellAvailable(pos)) {
+                if (cell !== pos && intersection.inRegion && intersection.area > MAX_INTERSECTION && !this.isCellAvailable(pos)) {
                     lastAlign = false;
                 }
             }, this);
@@ -449,12 +509,14 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
         });
 
         resize.on('resize:end', function(event) {
-            var gridsterWidth = this.get('boundingBox').getStyle('width').slice(0, -2),
+            var boundingBox = this.get('boundingBox'),
+                gridsterWidth = boundingBox.getStyle('width').slice(0, -2),
                 currentNodeRegion = currentNode.get('region'),
                 levelF = 4 * currentNodeRegion.width / gridsterWidth,
                 newLevel = Math.round(levelF),
                 level = levels[cell],
-                lastAlign = true;
+                lastAlign = true,
+                boundingBoxRegion = boundingBox.get('region');
 
             event.preventDefault();
 
@@ -464,25 +526,19 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
                 newLevel = 1;
             }
 
-            if (this._verifyBoundaryAlignment(currentNodeRegion)) {
-                console.log('Invalid region during alignment');
+            if (this._verifyBoundaryAlignment(currentNodeRegion, boundingBoxRegion)) {
                 event.preventDefault();
             }
 
             cells.each(function(eachCell, pos) {
                 var intersection = currentNode.intersect(eachCell);
 
-                if (cell !== pos && intersection.inRegion && intersection.area > 200 && !this.isCellAvailable(pos)) {
-                    console.log('inside occupied region of ' + pos + ' with area ' + intersection.area);
+                if (cell !== pos && intersection.inRegion && intersection.area > MAX_INTERSECTION && !this.isCellAvailable(pos)) {
                     lastAlign = false;
                 }
             }, this);
 
-            console.log('last align in end: ' + lastAlign);
-
-
             if (level === newLevel || !lastAlign) {
-                console.log('xzz');
                 setTimeout(function () {
                     currentNode.setStyles(initialStyle);
                 }, 0);
@@ -490,8 +546,7 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
             }
 
             if (lastAlign) {
-                this._expandCell(cell, this.RESIZE_DIRECTION_KEYS[resize.get('activeHandle')], newLevel);
-                console.log('new level = ' + newLevel);
+                this._resizeCell(cell, this.RESIZE_DIRECTION_KEYS[resize.get('activeHandle')], newLevel, currentNodeRegion, boundingBoxRegion);
             }
         }, this);
 
