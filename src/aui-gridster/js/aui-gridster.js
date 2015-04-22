@@ -407,6 +407,11 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
             counter -= 1;
         }
 
+        this.fire('cell-resize', {
+            cell: cell,
+            spaces: this.get('spaces')
+        });
+
         if (expansionCell !== cell) {
             this.fire('cell-moved', {
                 'old': cell,
