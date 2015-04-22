@@ -408,7 +408,7 @@ A.Gridster = A.Base.create('gridster', A.Widget, [], {
         }
 
         if (expansionCell !== cell) {
-            this.fire('cellMoved', {
+            this.fire('cell-moved', {
                 'old': cell,
                 'new': expansionCell
             });
