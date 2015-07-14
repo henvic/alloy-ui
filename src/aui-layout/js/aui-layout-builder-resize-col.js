@@ -12,6 +12,7 @@ var BREAKPOINTS = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
     CSS_RESIZE_COL_DRAGGABLE_BORDER = A.getClassName('layout', 'builder', 'resize', 'col', 'draggable', 'border'),
     CSS_RESIZE_COL_DRAGGABLE_HANDLE = A.getClassName('layout', 'builder', 'resize', 'col', 'draggable', 'handle'),
     MAX_SIZE = 12,
+    ADD_COLUMN_ACTION = 'addColumn',
     SELECTOR_ROW = '.layout-row';
 
 /**
@@ -32,6 +33,14 @@ A.LayoutBuilderResizeCol.prototype = {
         '<div class="' + CSS_RESIZE_COL_DRAGGABLE_BORDER + '"></div>' +
         '<div class="' + CSS_RESIZE_COL_DRAGGABLE_HANDLE + '" tabindex="8">' +
         '<span class="glyphicon glyphicon-resize-horizontal"></span></div></div>',
+    TPL_RESIZE_COL_EXPAND_LEFT_DRAGGABLE: '<div class="' + CSS_RESIZE_COL_DRAGGABLE + '">' +
+        '<div class="' + CSS_RESIZE_COL_DRAGGABLE_BORDER + '"></div>' +
+        '<div class="' + CSS_RESIZE_COL_DRAGGABLE_HANDLE + '" tabindex="8">' +
+        '<span class="glyphicon glyphicon-hand-right"></span></div></div>',
+    TPL_RESIZE_COL_EXPAND_RIGHT_DRAGGABLE: '<div class="' + CSS_RESIZE_COL_DRAGGABLE + '">' +
+        '<div class="' + CSS_RESIZE_COL_DRAGGABLE_BORDER + '"></div>' +
+        '<div class="' + CSS_RESIZE_COL_DRAGGABLE_HANDLE + '" tabindex="8">' +
+        '<span class="glyphicon glyphicon-hand-left"></span></div></div>',
 
     /**
      * Keeps a reference for dragNode for keyboard purposes only.
@@ -277,10 +286,24 @@ A.LayoutBuilderResizeCol.prototype = {
         var col1 = dragNode.getData('layout-col1'),
             col2 = dragNode.getData('layout-col2'),
             difference = position - dragNode.getData('layout-position'),
-            diff1 = col1.get('size') + difference,
-            diff2 = col2.get('size') - difference,
-            col1MinSize = col1.get('minSize'),
-            col2MinSize = col2.get('minSize');
+            diff1,
+            diff2,
+            col1MinSize,
+            col2MinSize;
+
+        if (dragNode.getData('layout-action') === ADD_COLUMN_ACTION) {
+            if ((col2 && difference < col2.get('size')) ||
+                (col1 && MAX_SIZE - col1.get('size') < position)) {
+                return true;
+            }
+
+            return false;
+        }
+
+        diff1 = col1.get('size') + difference,
+        diff2 = col2.get('size') - difference,
+        col1MinSize = col1.get('minSize'),
+        col2MinSize = col2.get('minSize');
 
         if (diff1 !== 0 && diff2 !== 0 && (diff1 < col1MinSize || diff2 < col2MinSize)) {
             return false;
@@ -529,6 +552,34 @@ A.LayoutBuilderResizeCol.prototype = {
     },
 
     /**
+     * Add new column drag handles for the given layout row.
+     *
+     * @method _addNewColumnRowDragHandles
+     * @param {A.LayoutRow} row
+     * @protected
+     */
+     _addNewColumnRowDragHandles: function(row) {
+        var cols = row.get('cols'),
+            draggableLeft = A.Node.create(this.TPL_RESIZE_COL_EXPAND_LEFT_DRAGGABLE),
+            draggableRight = A.Node.create(this.TPL_RESIZE_COL_EXPAND_RIGHT_DRAGGABLE),
+            rowNode = row.get('node').one(SELECTOR_ROW);
+
+        draggableLeft.setStyle('left', '0%');
+        draggableLeft.setData('layout-action', ADD_COLUMN_ACTION);
+        draggableLeft.setData('layout-position', 0);
+        draggableLeft.setData('layout-col1', undefined);
+        draggableLeft.setData('layout-col2', cols[0]);
+        draggableRight.setStyle('left', '100%');
+        draggableRight.setData('layout-action', ADD_COLUMN_ACTION);
+        draggableRight.setData('layout-position', MAX_SIZE);
+        draggableRight.setData('layout-col1', cols[cols.length - 1]);
+        draggableRight.setData('layout-col2', undefined);
+
+        rowNode.append(draggableLeft);
+        rowNode.append(draggableRight);
+    },
+
+    /**
      * Updates the drag handles for the given layout row.
      *
      * @method _syncRowDragHandles
@@ -537,12 +588,13 @@ A.LayoutBuilderResizeCol.prototype = {
      */
     _syncRowDragHandles: function(row) {
         var cols = row.get('cols'),
+            numberOfCols = cols.length,
             currentPos = 0,
             draggable,
             index,
             rowNode = row.get('node').one(SELECTOR_ROW);
 
-        for (index = 0; index < cols.length - 1; index++) {
+        for (index = 0; index < numberOfCols - 1; index++) {
             currentPos += cols[index].get('size');
 
             draggable = A.Node.create(this.TPL_RESIZE_COL_DRAGGABLE);
@@ -556,6 +608,10 @@ A.LayoutBuilderResizeCol.prototype = {
             }
 
             rowNode.append(draggable);
+        }
+
+        if (numberOfCols < MAX_SIZE) {
+            this._addNewColumnRowDragHandles(row);
         }
     },
 

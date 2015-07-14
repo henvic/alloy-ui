@@ -259,6 +259,6 @@ A.LayoutBuilderAddCol.ATTRS = {
      */
     enableAddCols: {
         validator: A.Lang.isBoolean,
-        value: true
+        value: false
     }
 };
